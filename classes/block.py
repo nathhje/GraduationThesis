@@ -10,4 +10,4 @@ class Block:
     def __init__(self):
         
         self.storage = 1
-        self.filled = 0.1
+        self.filled = 0.5

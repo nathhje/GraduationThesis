@@ -11,5 +11,6 @@ class Storage:
     
     def __init__(self, ndiscs):
         
+        self.nblocks = 2
         self.discs = []
-        self.discs.append(disc.Disc())
+        self.discs.append(disc.Disc(self.nblocks))

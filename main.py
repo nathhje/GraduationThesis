@@ -5,9 +5,12 @@ Created on Fri Jul  3 09:58:56 2020
 @author: Nathalie
 """
 
+import helpers.model as model
+
 def main():
     
-    print("hello world")
+    themodel = model.Model()
+    themodel.run()
     
 if __name__ == "__main__":
     main()
