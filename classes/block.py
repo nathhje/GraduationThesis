@@ -7,7 +7,9 @@ Created on Fri Jul  3 10:07:35 2020
 
 class Block:
     
-    def __init__(self):
+    def __init__(self,disc):
         
         self.storage = 1
-        self.filled = 0.5
+        self.filled = 0
+        self.pdisc = disc
+        self.files = []

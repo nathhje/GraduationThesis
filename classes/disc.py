@@ -10,6 +10,6 @@ import classes.block as block
 class Disc:
     
     def __init__(self,nblocks):
-        self.blocks = []
-        self.blocks.append(block.Block())
+        self.blocks = [block.Block(self) for i in range(nblocks)]
         self.bandwith = 1
+        self.files = []
