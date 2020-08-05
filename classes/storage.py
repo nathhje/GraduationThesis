@@ -13,4 +13,5 @@ class Storage:
         
         self.nblocks = 2
         self.discs = [disc.Disc(self.nblocks) for i in range(ndiscs)]
+        self.filled = 0
         self.files = []

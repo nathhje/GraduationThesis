@@ -9,6 +9,7 @@ import random
 
 import classes.storage as storage
 import classes.file as file
+import helpers.choices as choices
 
 class Model:
     
@@ -28,28 +29,16 @@ class Model:
                 
     def placeFile(self,size):
         
-        free = 0
-        counter = 0
-            
-        while free < size and counter < 50:
-            disc = random.choice(self.storage.discs)
-            block = random.choice(disc.blocks)
-            free = block.storage - block.filled
-            counter += 1
-                
-        if free > size:
-            
-            defile = file.File(size, block)
-            self.storage.files.append(defile)
-            disc.files.append(defile)
-            block.files.append(defile)
-            block.filled += size
+        choices.mostSpace(self,size)
+        
     
     def run(self):
         
         for i in range(1000):
             self.action()
             print(self.storage.discs[0].blocks[0].filled)
+            print(self.storage.discs[0].filled)
+            print(self.storage.filled)
             
     def action(self):
         

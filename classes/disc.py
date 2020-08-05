@@ -13,3 +13,4 @@ class Disc:
         self.blocks = [block.Block(self) for i in range(nblocks)]
         self.bandwith = 1
         self.files = []
+        self.filled = 0
