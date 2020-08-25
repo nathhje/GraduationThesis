@@ -11,6 +11,6 @@ class Disc:
     
     def __init__(self,nblocks):
         self.blocks = [block.Block(self) for i in range(nblocks)]
-        self.bandwith = 1
+        self.bandwith = 0.0001
         self.files = []
         self.filled = 0

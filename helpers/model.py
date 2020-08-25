@@ -10,14 +10,18 @@ import random
 import classes.storage as storage
 import classes.file as file
 import helpers.choices as choices
+import classes.job as job
 
 class Model:
     
     def __init__(self):
         
-        self.ndiscs = 2
+        self.npools = 4
+        self.ndoors = 4
+        self.queue = []
         
-        self.storage = storage.Storage(self.ndiscs)
+        self.storage = storage.Storage(self.npools)
+        self.jobs = []
         
         self.setup()
     
@@ -29,15 +33,17 @@ class Model:
                 
     def placeFile(self,size):
         
-        choices.mostSpace(self,size)
+        choices.mostSpace(self.storage,size)
         
     
     def run(self):
         
         for i in range(1000):
-            self.action()
-            print(self.storage.discs[0].blocks[0].filled)
-            print(self.storage.discs[0].filled)
+            if random.random() < 0.1:
+                thedoor = random.choice(self.storage.doors)
+                thetype = self.action()
+                job.Job(thedoor,thetype)
+            print(self.storage.pools[0].filled)
             print(self.storage.filled)
             
     def action(self):
@@ -45,12 +51,12 @@ class Model:
         rand = random.random()
         
         if rand<0.46:
-            self.read()
+            return("read")
         elif rand<0.92:
-            self.write()
+            return("write")
         else:
-            self.delete()
-            
+            return("delete")
+    '''
     def read(self):
         print("read")
         rfile = random.choice(self.storage.files)
@@ -63,7 +69,7 @@ class Model:
     def delete(self):
         print("delete")
         dfile = random.choice(self.storage.files)
-        dfile.block.files.remove(dfile)
-        dfile.block.pdisc.files.remove(dfile)
+        dfile.pool.files.remove(dfile)
         self.storage.files.remove(dfile)
-        dfile.block.filled -= dfile.size
+        dfile.pool.filled -= dfile.size
+    '''

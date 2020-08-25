@@ -5,13 +5,14 @@ Created on Fri Jul  3 10:10:16 2020
 @author: Gebruiker
 """
 
-import classes.disc as disc
+import classes.pool as pool
+import classes.door as door
 
 class Storage:
     
-    def __init__(self, ndiscs):
+    def __init__(self, npools):
         
-        self.nblocks = 2
-        self.discs = [disc.Disc(self.nblocks) for i in range(ndiscs)]
+        self.pools = [pool.Pool() for i in range(npools)]
         self.filled = 0
         self.files = []
+        self.doors = [door.Door(self) for i in range(self.ndoors)]

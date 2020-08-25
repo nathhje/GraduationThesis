@@ -7,6 +7,6 @@ Created on Thu Jul 16 11:42:51 2020
 
 class File:
     
-    def __init__(self,size,block):
+    def __init__(self,size):
         self.size = size
-        self.block = block
+        self.pool = False
