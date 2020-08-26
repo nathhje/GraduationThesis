@@ -10,3 +10,5 @@ class Memory():
     def __init__(self):
         self.space = 0.1
         self.buffer = 0.05
+        self.filled = 0
+        self.flushing = False

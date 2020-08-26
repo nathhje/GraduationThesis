@@ -16,3 +16,4 @@ class Storage:
         self.filled = 0
         self.files = []
         self.doors = [door.Door(self) for i in range(self.ndoors)]
+        self.currenttraffic = []

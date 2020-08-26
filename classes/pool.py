@@ -5,6 +5,8 @@ Created on Tue Aug 25 09:50:48 2020
 @author: Gebruiker
 """
 
+import classes.memory as memory
+
 class Pool:
     
     def __init__(self):
@@ -12,3 +14,4 @@ class Pool:
         self.files = []
         self.space = 1
         self.filled = 0
+        self.memo = memory.Memory()

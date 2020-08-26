@@ -33,7 +33,8 @@ class Model:
                 
     def placeFile(self,size):
         
-        choices.mostSpace(self.storage,size)
+        defile = file.File(size)
+        choices.mostSpace(self.storage,size,defile)
         
     
     def run(self):
@@ -42,9 +43,21 @@ class Model:
             if random.random() < 0.1:
                 thedoor = random.choice(self.storage.doors)
                 thetype = self.action()
-                job.Job(thedoor,thetype)
-            print(self.storage.pools[0].filled)
-            print(self.storage.filled)
+                size = random.random()/100.
+                thefile = file.File(size)
+                thejob = job.Job(thedoor,thetype,thefile,size)
+                self.storage.currenttraffic.append(thejob)
+            #print(self.storage.pools[0].filled)
+            #print(self.storage.filled)
+            
+            for ajob in self.storage.currenttraffic:
+                
+                ajob.Continue()
+                
+            for pool in self.storage.pools:
+                
+                if pool.memo.filled > pool.memo.buffer:
+                    pool.memo.flushing = True
             
     def action(self):
         

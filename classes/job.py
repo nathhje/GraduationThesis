@@ -31,7 +31,8 @@ class Job:
         print("hello")
         
     def startWrite(self):
-        self.pool, self.speed = self.door.getPool()
+        self.pool,self.speed = self.door.getPool(self,self.size,self.filename)
+        
         
         
     def startDelete(self):
@@ -41,3 +42,13 @@ class Job:
         
         if self.requesttime < 1:
             self.requesttime += 0.1
+            
+        else:
+            self.complete += self.speed
+            self.pool.memo.filled += self.speed
+            if self.complete > self.size:
+                self.endWrite()
+                
+    def endWrite(self):
+        
+        self.door.closeJob(self)

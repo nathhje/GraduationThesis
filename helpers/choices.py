@@ -9,7 +9,7 @@ import random
 
 import classes.file as file
 
-def randomChoice(storage,size):
+def randomChoice(storage,size,defile):
     
     free = 0
     counter = 0
@@ -21,7 +21,7 @@ def randomChoice(storage,size):
                 
     if free > size:
             
-        defile = file.File(size, pool)
+        defile.pool = pool
         storage.files.append(defile)
         pool.files.append(defile)
         pool.filled += size
@@ -29,7 +29,7 @@ def randomChoice(storage,size):
     else:
         print("error, file could not be saved")
 
-def mostSpace(storage,size):
+def mostSpace(storage,size,defile):
     
     thePool = storage.pools[0]
     
@@ -41,11 +41,13 @@ def mostSpace(storage,size):
     free = thePool.space -thePool.filled
     
     if free > size:
-        defile = file.File(size,thePool)
+        defile.pool = thePool
         storage.files.append(defile)
         thePool.files.append(defile)
         thePool.filled += size
         storage.filled += size
+        
+        return thePool
     else:
         print("error, file could not be saved")
         
