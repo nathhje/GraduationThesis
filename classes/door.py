@@ -28,6 +28,26 @@ class Door():
                 
         return thePool, newspeed
     
+    def locatePool(self,file):
+        thePool = 0
+        
+        for pool in self.storage.pools:
+            if file in pool.files:
+                thePool = pool
+                
+        sharedspeed = []
+        
+        for job in self.storage.currenttraffic:
+            if job.pool == thePool:
+                sharedspeed.append(job)
+                
+        newspeed = thePool.bandwith / (len(sharedspeed)+1)
+        for job in sharedspeed:
+            job.speed = newspeed
+                
+        return thePool, newspeed
+        
+    
     def closeJob(self,job):
         
         self.storage.currenttraffic.remove(job)

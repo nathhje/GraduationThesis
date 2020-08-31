@@ -20,7 +20,7 @@ class Model:
         self.ndoors = 4
         self.queue = []
         
-        self.storage = storage.Storage(self.npools)
+        self.storage = storage.Storage(self.npools,self.ndoors)
         self.jobs = []
         
         self.setup()
@@ -56,8 +56,9 @@ class Model:
                 
             for pool in self.storage.pools:
                 
-                if pool.memo.filled > pool.memo.buffer:
-                    pool.memo.flushing = True
+                pool.memo.flushCheck()
+                
+                
             
     def action(self):
         

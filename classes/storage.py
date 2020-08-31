@@ -10,10 +10,10 @@ import classes.door as door
 
 class Storage:
     
-    def __init__(self, npools):
+    def __init__(self, npools,ndoors):
         
         self.pools = [pool.Pool() for i in range(npools)]
         self.filled = 0
         self.files = []
-        self.doors = [door.Door(self) for i in range(self.ndoors)]
+        self.doors = [door.Door(self) for i in range(ndoors)]
         self.currenttraffic = []
