@@ -31,14 +31,14 @@ class Job:
             self.startDelete
             
     def startRead(self):
-        self.pool, self.speed, self.loadspeed = self.door.locatePool(self, self.filename)
+        self.pool, self.speed, self.loadspeed = self.door.locatePool(self.filename)
         
     def startWrite(self):
-        self.pool,self.speed = self.door.getPool(self,self.size,self.filename)
+        self.pool,self.speed = self.door.getPool(self.size,self.filename)
         
         
     def startDelete(self):
-        print("world")
+        self.pool = self.door.deletePool(self.filename)
         
     def Continue(self):
         
@@ -83,6 +83,20 @@ class Job:
                 
             if self.loaded > self.size and self.inmemory == 0:
                 self.End()
+                
+    def deleteContinue(self):
+        
+        if self.requesttime < 1:
+            self.requesttime += 0.1
+            
+        else:
+            self.requesttime += 0.1
+            
+            greenlight = self.door.checkDelete(self.pool)
+            
+            if greenlight == True or self.requesttime > 3:
+                self.pool.files.remove(self.filename)
+                self.End(self)
                 
     def End(self):
         

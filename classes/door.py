@@ -34,18 +34,53 @@ class Door():
         for pool in self.storage.pools:
             if file in pool.files:
                 thePool = pool
-                
+        print(thePool)
         sharedspeed = []
+        loadspeed = []
         
         for job in self.storage.currenttraffic:
             if job.pool == thePool:
                 sharedspeed.append(job)
+                if job.thetype == 'read':
+                    loadspeed.append(job)
                 
         newspeed = thePool.bandwith / (len(sharedspeed)+1)
+        newload = thePool.memo.flushspeed / (len(loadspeed)+1)
+        if thePool.memo.flushing == True:
+             newload = newload / 2
+            
         for job in sharedspeed:
             job.speed = newspeed
+            
+        for job in loadspeed:
+            job.loadspeed = newload
                 
-        return thePool, newspeed
+        return thePool, newspeed, newload
+    
+    def deletePool(self, file):
+        
+        self.storage.files.remove(file)
+        
+        thePool = 0
+        
+        for pool in self.storage.pools:
+            if file in pool.files:
+                thePool = pool
+                
+        return thePool
+    
+    def checkDelete(self, pool):
+        
+        traffic = []
+        
+        for job in self.storage.currenttraffic:
+            if job.pool == pool:
+                traffic.append(job)
+                
+        if len(traffic) > 2:
+            return False
+        else:
+            return True
         
     
     def closeJob(self,job):

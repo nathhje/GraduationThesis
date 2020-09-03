@@ -14,4 +14,4 @@ class Pool:
         self.files = []
         self.space = 1
         self.filled = 0
-        self.memo = memory.Memory()
+        self.memo = memory.Memory(self)

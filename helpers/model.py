@@ -56,7 +56,7 @@ class Model:
                 
             for pool in self.storage.pools:
                 
-                pool.memo.flushCheck()
+                pool.memo.flushCheck(self.storage.currenttraffic)
                 
                 
             
