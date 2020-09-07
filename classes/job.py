@@ -5,13 +5,17 @@ Created on Wed Aug 19 12:12:03 2020
 @author: Gebruiker
 """
 
+import random
+
+import classes.file as file
+
 class Job:
     
-    def __init__(self,door,thetype,filename,size):
+    def __init__(self,door,thetype):
         
         self.thetype = thetype
-        self.filename = filename
-        self.size = size
+        self.filename = 0
+        self.size = 0
         self.door = door
         self.speed = 0
         self.loadspeed = 0
@@ -28,17 +32,23 @@ class Job:
             self.startWrite()
             
         if self.thetype == "delete":
-            self.startDelete
+            self.startDelete()
             
     def startRead(self):
-        self.pool, self.speed, self.loadspeed = self.door.locatePool(self.filename)
+        
+        self.filename, self.pool, self.speed, self.loadspeed = self.door.locatePool()
+        self.size = self.filename.size
         
     def startWrite(self):
+        
+        self.size = random.random()/100.
+        self.filename = file.File(self.size)
         self.pool,self.speed = self.door.getPool(self.size,self.filename)
         
         
+        
     def startDelete(self):
-        self.pool = self.door.deletePool(self.filename)
+        self.filename, self.pool = self.door.deletePool()
         
     def Continue(self):
         
@@ -96,7 +106,7 @@ class Job:
             
             if greenlight == True or self.requesttime > 3:
                 self.pool.files.remove(self.filename)
-                self.End(self)
+                self.End()
                 
     def End(self):
         

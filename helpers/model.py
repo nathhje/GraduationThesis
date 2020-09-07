@@ -43,22 +43,32 @@ class Model:
             if random.random() < 0.1:
                 thedoor = random.choice(self.storage.doors)
                 thetype = self.action()
-                size = random.random()/100.
-                thefile = file.File(size)
-                thejob = job.Job(thedoor,thetype,thefile,size)
+                
+                thejob = job.Job(thedoor,thetype)
                 self.storage.currenttraffic.append(thejob)
             #print(self.storage.pools[0].filled)
             #print(self.storage.filled)
             
             for ajob in self.storage.currenttraffic:
-                
+                print(ajob.thetype)
+                print('complete',ajob.complete)
+                print('size', ajob.size)
                 ajob.Continue()
                 
             for pool in self.storage.pools:
                 
                 pool.memo.flushCheck(self.storage.currenttraffic)
                 
+        while(len(self.storage.currenttraffic)>0):
+            for ajob in self.storage.currenttraffic:
+                print(ajob.thetype)
+                print('complete',ajob.complete)
+                print('size', ajob.size)
+                ajob.Continue()
                 
+            for pool in self.storage.pools:
+                
+                pool.memo.flushCheck(self.storage.currenttraffic)
             
     def action(self):
         
@@ -70,20 +80,3 @@ class Model:
             return("write")
         else:
             return("delete")
-    '''
-    def read(self):
-        print("read")
-        rfile = random.choice(self.storage.files)
-        
-    def write(self):
-        print("write")
-        size = random.random()/100.
-        self.placeFile(size)
-        
-    def delete(self):
-        print("delete")
-        dfile = random.choice(self.storage.files)
-        dfile.pool.files.remove(dfile)
-        self.storage.files.remove(dfile)
-        dfile.pool.filled -= dfile.size
-    '''

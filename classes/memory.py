@@ -28,7 +28,7 @@ class Memory():
         
         for job in jobs:
             if job.thetype == 'read' and job.pool == self.pool:
-                sharedspeed.append[job]
+                sharedspeed.append(job)
         
         if self.filled > self.buffer:
             self.flushing = True

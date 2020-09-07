@@ -5,6 +5,8 @@ Created on Tue Aug 25 13:44:57 2020
 @author: Gebruiker
 """
 
+import random
+
 import helpers.choices as choices
 
 class Door():
@@ -28,13 +30,10 @@ class Door():
                 
         return thePool, newspeed
     
-    def locatePool(self,file):
-        thePool = 0
-        
-        for pool in self.storage.pools:
-            if file in pool.files:
-                thePool = pool
-        print(thePool)
+    def locatePool(self):
+        thePool = random.choice(self.storage.pools)
+        theFile = random.choice(thePool.files)
+                
         sharedspeed = []
         loadspeed = []
         
@@ -55,19 +54,16 @@ class Door():
         for job in loadspeed:
             job.loadspeed = newload
                 
-        return thePool, newspeed, newload
+        return theFile, thePool, newspeed, newload
     
-    def deletePool(self, file):
+    def deletePool(self):
+        
+        thePool = random.choice(self.storage.pools)
+        file = random.choice(thePool.files)
         
         self.storage.files.remove(file)
-        
-        thePool = 0
-        
-        for pool in self.storage.pools:
-            if file in pool.files:
-                thePool = pool
                 
-        return thePool
+        return file, thePool
     
     def checkDelete(self, pool):
         
