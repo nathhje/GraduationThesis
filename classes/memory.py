@@ -13,12 +13,12 @@ class Memory():
     
     def __init__(self, pool):
         self.pool = pool
-        self.space = 0.1
-        self.buffer = 0.05
+        self.space = 1000
+        self.buffer = 500
         self.filled = 0.
         self.flushing = False
         self.flushed = 0.
-        self.flushspeed = 0.0001
+        self.flushspeed = 1.
         self.readused = 0.
         
         

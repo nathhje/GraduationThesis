@@ -6,6 +6,7 @@ Created on Mon Jul  6 11:17:45 2020
 """
 
 import random
+import matplotlib.pyplot as plt
 
 import classes.storage as storage
 import classes.file as file
@@ -22,53 +23,89 @@ class Model:
         
         self.storage = storage.Storage(self.npools,self.ndoors)
         self.jobs = []
+        self.speedhistory = []
+        self.times = []
         
         self.setup()
     
     def setup(self):
         
         for i in range(random.randint(10,100)):
-            size = random.random()/100.
+            size = random.random()*100.
             self.placeFile(size)
                 
     def placeFile(self,size):
         
         defile = file.File(size)
-        choices.mostSpace(self.storage,size,defile)
+        choices.randomChoice(self.storage,size,defile)
         
     
     def run(self):
         
-        for i in range(1000):
+        t = 1000
+        
+        for i in range(t):
+            print(i,len(self.storage.currenttraffic))
+            '''for door in self.storage.doors:
+                print(door.storage.currenttraffic)
+            
+            print('actual traffic',self.storage.currenttraffic)'''
+            
             if random.random() < 0.1:
+                
                 thedoor = random.choice(self.storage.doors)
                 thetype = self.action()
                 
                 thejob = job.Job(thedoor,thetype)
                 self.storage.currenttraffic.append(thejob)
+                thejob.time.append(i)
+                thejob.speedhistory.append(thejob.speed)
             #print(self.storage.pools[0].filled)
             #print(self.storage.filled)
             
             for ajob in self.storage.currenttraffic:
-                print(ajob.thetype)
+                '''print(ajob.thetype)
                 print('complete',ajob.complete)
-                print('size', ajob.size)
+                print('size', ajob.size)'''
                 ajob.Continue()
+                ajob.time.append(i)
+                ajob.speedhistory.append(thejob.speed)
+                if thejob.ended == True:
+                    self.speedhistory.append(ajob.speedhistory)
+                    self.times.append(ajob.time)
                 
             for pool in self.storage.pools:
                 
                 pool.memo.flushCheck(self.storage.currenttraffic)
+            
+            #print('traffic', len(self.storage.currenttraffic))
                 
         while(len(self.storage.currenttraffic)>0):
+            print(t,len(self.storage.currenttraffic))
+            '''for door in self.storage.doors:
+                print(door.storage.currenttraffic)
+            
+            print('actual traffic',self.storage.currenttraffic)'''
+            #print('traffic', len(self.storage.currenttraffic))
             for ajob in self.storage.currenttraffic:
-                print(ajob.thetype)
+                #print('speeds', ajob.speed)
+                #print('pool', ajob.pool)
+                '''print(ajob.thetype)
                 print('complete',ajob.complete)
-                print('size', ajob.size)
+                print('size', ajob.size)'''
                 ajob.Continue()
+                ajob.time.append(t)
+                ajob.speedhistory.append(ajob.speed)
+                if ajob.ended == True:
+                    self.speedhistory.append(ajob.speedhistory)
+                    self.times.append(ajob.time)
                 
             for pool in self.storage.pools:
                 
                 pool.memo.flushCheck(self.storage.currenttraffic)
+                
+            t += 1
+        self.graphs()
             
     def action(self):
         
@@ -80,3 +117,12 @@ class Model:
             return("write")
         else:
             return("delete")
+            
+    def graphs(self):
+        
+        plt.figure()
+        for i in range(len(self.times)):
+            plt.plot(self.times[i],self.speedhistory[i])
+            #plt.show()
+            #plt.figure()
+        plt.show()

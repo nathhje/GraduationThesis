@@ -19,11 +19,13 @@ class Job:
         self.door = door
         self.speed = 0
         self.loadspeed = 0
-        self.loaded = 0
         self.inmemory = 0
         self.complete = 0
         self.pool = 0
         self.requesttime = 0
+        self.speedhistory = []
+        self.time = []
+        self.ended = False
         
         if self.thetype == "read":
             self.startRead()
@@ -41,7 +43,7 @@ class Job:
         
     def startWrite(self):
         
-        self.size = random.random()/100.
+        self.size = random.random()*100.
         self.filename = file.File(self.size)
         self.pool,self.speed = self.door.getPool(self.size,self.filename)
         
@@ -51,6 +53,7 @@ class Job:
         self.filename, self.pool = self.door.deletePool()
         
     def Continue(self):
+        #print('here we go again')
         
         if self.thetype == "write":
             self.writeContinue()
@@ -79,8 +82,8 @@ class Job:
             self.requesttime += 0.1
             
         else:
-            if self.loaded < self.size:
-                self.loaded += self.loadspeed
+            if self.complete < self.size:
+                self.complete += self.loadspeed
                 self.inmemory += self.loadspeed
                 self.pool.memo.readused += self.loadspeed
             
@@ -91,7 +94,7 @@ class Job:
                 self.pool.memo.readused -= self.inmemory
                 self.inmemory = 0
                 
-            if self.loaded > self.size and self.inmemory == 0:
+            if self.complete > self.size and self.inmemory == 0:
                 self.End()
                 
     def deleteContinue(self):
@@ -111,3 +114,4 @@ class Job:
     def End(self):
         
         self.door.closeJob(self)
+        self.ended = True

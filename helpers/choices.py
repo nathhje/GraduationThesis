@@ -26,6 +26,8 @@ def randomChoice(storage,size,defile):
         pool.files.append(defile)
         pool.filled += size
         storage.filled += size
+        #print('pool',pool)
+        return pool
     else:
         print("error, file could not be saved")
 

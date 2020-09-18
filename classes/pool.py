@@ -10,8 +10,9 @@ import classes.memory as memory
 class Pool:
     
     def __init__(self):
-        self.bandwith = 0.0001
+        self.bandwith = 10.
         self.files = []
-        self.space = 1
+        self.space = 10000.
         self.filled = 0
         self.memo = memory.Memory(self)
+        
