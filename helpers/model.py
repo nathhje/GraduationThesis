@@ -25,6 +25,7 @@ class Model:
         self.jobs = []
         self.speedhistory = []
         self.times = []
+        self.poolhistory = []
         
         self.setup()
     
@@ -42,6 +43,8 @@ class Model:
     
     def run(self):
         
+        currentcounter =0
+        
         t = 1000
         
         for i in range(t):
@@ -58,6 +61,7 @@ class Model:
                 
                 thejob = job.Job(thedoor,thetype)
                 self.storage.currenttraffic.append(thejob)
+                currentcounter += 1
                 thejob.time.append(i)
                 thejob.speedhistory.append(thejob.speed)
             #print(self.storage.pools[0].filled)
@@ -73,6 +77,7 @@ class Model:
                 if thejob.ended == True:
                     self.speedhistory.append(ajob.speedhistory)
                     self.times.append(ajob.time)
+                    self.poolhistory.append(ajob.pool)
                 
             for pool in self.storage.pools:
                 
@@ -99,12 +104,14 @@ class Model:
                 if ajob.ended == True:
                     self.speedhistory.append(ajob.speedhistory)
                     self.times.append(ajob.time)
+                    self.poolhistory.append(ajob.pool)
                 
             for pool in self.storage.pools:
                 
                 pool.memo.flushCheck(self.storage.currenttraffic)
                 
             t += 1
+        print("currentcounter", currentcounter)
         self.graphs()
             
     def action(self):
@@ -119,10 +126,18 @@ class Model:
             return("delete")
             
     def graphs(self):
+        print('graph start',len(self.poolhistory))
+        counter = 0
         
-        plt.figure()
-        for i in range(len(self.times)):
-            plt.plot(self.times[i],self.speedhistory[i])
-            #plt.show()
-            #plt.figure()
-        plt.show()
+        for pool in self.storage.pools:
+        
+            plt.figure()
+            for i in range(len(self.times)):
+                if self.poolhistory[i] == pool:
+                    counter +=1
+                    plt.plot(self.times[i],self.speedhistory[i])
+                    plt.xlim(600,1000)
+                #plt.show()
+                #plt.figure()
+            plt.show()
+            print(counter)
