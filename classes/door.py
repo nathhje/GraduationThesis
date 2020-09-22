@@ -15,6 +15,7 @@ class Door():
         
         self.storage = storage
         self.poolcounter = []
+        self.everyspeed = []
         
     def getPool(self,size,file):
         thePool = choices.randomChoice(self.storage,size,file)
@@ -26,6 +27,8 @@ class Door():
                 sharedspeed.append(job)
         #print('getpool')
         newspeed = thePool.bandwith / (len(sharedspeed)+1)
+        self.everyspeed.append(newspeed)
+        print('writespeed',len(self.storage.currenttraffic),newspeed)
         #print('new',newspeed)
         for job in sharedspeed:
             #print(job.speed)
@@ -55,6 +58,8 @@ class Door():
         print('amount',len(sharedspeed))
         print('other amount', len(loadspeed))'''
         newspeed = thePool.bandwith / (len(sharedspeed)+1)
+        self.everyspeed.append(newspeed)
+        print('readspeed',len(self.storage.currenttraffic),newspeed)
         #print('getpool')
         #print('new',newspeed)
         newload = thePool.memo.flushspeed / (len(loadspeed)+1)
@@ -115,6 +120,8 @@ class Door():
         #print('closed')
         if len(sharedspeed) > 0:
             newspeed = job.pool.bandwith / len(sharedspeed)
+            self.everyspeed.append(newspeed)
+            print('closedspeed',len(self.storage.currenttraffic),newspeed)
             #print('new',newspeed)
             #print(sharedspeed)
             for job in sharedspeed:

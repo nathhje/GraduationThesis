@@ -26,6 +26,8 @@ class Model:
         self.speedhistory = []
         self.times = []
         self.poolhistory = []
+        self.ltime = []
+        self.currentlist = []
         
         self.setup()
     
@@ -48,7 +50,14 @@ class Model:
         t = 1000
         
         for i in range(t):
-            print(i,len(self.storage.currenttraffic))
+            self.ltime.append(i)
+            self.currentlist.append(len(self.storage.currenttraffic))
+            for pool in self.storage.pools:
+                if pool.memo.flushing == True:
+                    pool.flushing.append(1)
+                else:
+                    pool.flushing.append(0)
+            #print(i,len(self.storage.currenttraffic))
             '''for door in self.storage.doors:
                 print(door.storage.currenttraffic)
             
@@ -74,10 +83,11 @@ class Model:
                 ajob.Continue()
                 ajob.time.append(i)
                 ajob.speedhistory.append(thejob.speed)
-                if thejob.ended == True:
+                if ajob.ended == True:
                     self.speedhistory.append(ajob.speedhistory)
                     self.times.append(ajob.time)
                     self.poolhistory.append(ajob.pool)
+                    print(ajob.thetype,ajob.speedhistory)
                 
             for pool in self.storage.pools:
                 
@@ -86,7 +96,14 @@ class Model:
             #print('traffic', len(self.storage.currenttraffic))
                 
         while(len(self.storage.currenttraffic)>0):
-            print(t,len(self.storage.currenttraffic))
+            self.ltime.append(t)
+            self.currentlist.append(len(self.storage.currenttraffic))
+            for pool in self.storage.pools:
+                if pool.memo.flushing == True:
+                    pool.flushing.append(1)
+                else:
+                    pool.flushing.append(0)
+            #print(t,len(self.storage.currenttraffic))
             '''for door in self.storage.doors:
                 print(door.storage.currenttraffic)
             
@@ -105,6 +122,7 @@ class Model:
                     self.speedhistory.append(ajob.speedhistory)
                     self.times.append(ajob.time)
                     self.poolhistory.append(ajob.pool)
+                    print(ajob.thetype,ajob.speedhistory)
                 
             for pool in self.storage.pools:
                 
@@ -113,6 +131,9 @@ class Model:
             t += 1
         print("currentcounter", currentcounter)
         self.graphs()
+        
+        for door in self.storage.doors:
+            print(door.everyspeed)
             
     def action(self):
         
@@ -120,7 +141,7 @@ class Model:
         
         if rand<0.46:
             return("read")
-        elif rand<0.92:
+        elif rand<1.2:
             return("write")
         else:
             return("delete")
@@ -135,9 +156,17 @@ class Model:
             for i in range(len(self.times)):
                 if self.poolhistory[i] == pool:
                     counter +=1
+                    #print(self.speedhistory[i])
                     plt.plot(self.times[i],self.speedhistory[i])
-                    plt.xlim(600,1000)
+                    #plt.xlim(600,1000)
                 #plt.show()
                 #plt.figure()
             plt.show()
             print(counter)
+            plt.figure()
+            plt.plot(self.ltime,pool.flushing)
+            plt.show()
+            
+        plt.figure()
+        plt.plot(self.ltime,self.currentlist)
+        plt.show()

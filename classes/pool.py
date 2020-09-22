@@ -16,3 +16,4 @@ class Pool:
         self.filled = 0
         self.memo = memory.Memory(self)
         
+        self.flushing = []
