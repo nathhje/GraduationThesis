@@ -67,12 +67,21 @@ class Model:
                 
                 thedoor = random.choice(self.storage.doors)
                 thetype = self.action()
+                #print('thetype', thetype)
+                #if thetype == 'delete':
+                    #print('again')
+                    #for ljob in self.storage.currenttraffic:
+                        #print(ljob.speed)
                 
                 thejob = job.Job(thedoor,thetype)
                 self.storage.currenttraffic.append(thejob)
                 currentcounter += 1
                 thejob.time.append(i)
                 thejob.speedhistory.append(thejob.speed)
+                '''if thetype == 'delete':
+                    print('end')
+                    for ljob in self.storage.currenttraffic:
+                        print(ljob.speed)'''
             #print(self.storage.pools[0].filled)
             #print(self.storage.filled)
             
@@ -80,14 +89,16 @@ class Model:
                 '''print(ajob.thetype)
                 print('complete',ajob.complete)
                 print('size', ajob.size)'''
+                #print('before',ajob.thetype, ajob.speed)
                 ajob.Continue()
+                #print('after',ajob.thetype, ajob.speed)
                 ajob.time.append(i)
-                ajob.speedhistory.append(thejob.speed)
+                ajob.speedhistory.append(ajob.speed)
                 if ajob.ended == True:
                     self.speedhistory.append(ajob.speedhistory)
                     self.times.append(ajob.time)
                     self.poolhistory.append(ajob.pool)
-                    print(ajob.thetype,ajob.speedhistory)
+                    #print(ajob.thetype,ajob.speedhistory)
                 
             for pool in self.storage.pools:
                 
@@ -122,7 +133,7 @@ class Model:
                     self.speedhistory.append(ajob.speedhistory)
                     self.times.append(ajob.time)
                     self.poolhistory.append(ajob.pool)
-                    print(ajob.thetype,ajob.speedhistory)
+                    #print(ajob.thetype,ajob.speedhistory)
                 
             for pool in self.storage.pools:
                 
@@ -141,7 +152,7 @@ class Model:
         
         if rand<0.46:
             return("read")
-        elif rand<1.2:
+        elif rand<0.92:
             return("write")
         else:
             return("delete")

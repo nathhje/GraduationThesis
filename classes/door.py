@@ -23,12 +23,12 @@ class Door():
         sharedspeed = []
         
         for job in self.storage.currenttraffic:
-            if job.pool == thePool:
+            if job.pool == thePool and job.thetype != 'delete':
                 sharedspeed.append(job)
         #print('getpool')
         newspeed = thePool.bandwith / (len(sharedspeed)+1)
         self.everyspeed.append(newspeed)
-        print('writespeed',len(self.storage.currenttraffic),newspeed)
+        #print('writespeed',len(self.storage.currenttraffic),newspeed)
         #print('new',newspeed)
         for job in sharedspeed:
             #print(job.speed)
@@ -47,7 +47,7 @@ class Door():
         loadspeed = []
         
         for job in self.storage.currenttraffic:
-            if job.pool == thePool:
+            if job.pool == thePool and job.thetype != 'delete':
                 sharedspeed.append(job)
                 #print('speed',job.speed)
                 if job.thetype == 'read':
@@ -59,7 +59,7 @@ class Door():
         print('other amount', len(loadspeed))'''
         newspeed = thePool.bandwith / (len(sharedspeed)+1)
         self.everyspeed.append(newspeed)
-        print('readspeed',len(self.storage.currenttraffic),newspeed)
+        #print('readspeed',len(self.storage.currenttraffic),newspeed)
         #print('getpool')
         #print('new',newspeed)
         newload = thePool.memo.flushspeed / (len(loadspeed)+1)
@@ -118,10 +118,10 @@ class Door():
             if ajob.pool == job.pool:
                 sharedspeed.append(ajob)
         #print('closed')
-        if len(sharedspeed) > 0:
+        if len(sharedspeed) > 0 and job.thetype != 'delete':
             newspeed = job.pool.bandwith / len(sharedspeed)
             self.everyspeed.append(newspeed)
-            print('closedspeed',len(self.storage.currenttraffic),newspeed)
+            #print('closedspeed',len(self.storage.currenttraffic),newspeed)
             #print('new',newspeed)
             #print(sharedspeed)
             for job in sharedspeed:
