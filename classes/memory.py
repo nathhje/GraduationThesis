@@ -18,12 +18,13 @@ class Memory():
         self.filled = 0.
         self.flushing = False
         self.flushed = 0.
-        self.flushspeed = 10.
+        self.flushspeed = 5.
         self.readused = 0.
+        self.flushhistory = []
         
         
     def flushCheck(self, jobs):
-        
+        self.flushhistory.append(self.flushed)
         sharedspeed = []
         
         for job in jobs:
@@ -32,22 +33,24 @@ class Memory():
         #print(self.filled)
         if self.filled > self.buffer:
             self.flushing = True
-            self.flushed = self.filled
-            print(self.filled)
+            self.flushed += self.filled
+            #print(self.filled)
             self.filled = 0.
             for job in sharedspeed:
                 job.loadspeed = job.loadspeed / 2
-        print(self.flushed)
+        #print(self.flushed)
         if self.flushing == True:
-            
+            #print('true')
+            #print(self.flushed)
             if len(sharedspeed) == 0:
                 self.flushed -= self.flushspeed
             else:
                 self.flushed -= (self.flushspeed/2)
+            #print(self.flushed)
             if self.flushed <= 0:
                 self.flushed = 0.
-                self.flushing == False
-                
+                self.flushing = False
+                #print('logisch')
                 for job in sharedspeed:
                     job.loadspeed = job.loadspeed * 2
                 

@@ -55,61 +55,67 @@ class Job:
     def Continue(self):
         #print('here we go again')
         
-        if self.thetype == "write":
-            self.writeContinue()
+        if self.requesttime < 1:
+            self.requesttime += 0.1
             
-        if self.thetype == "read":
-            self.readContinue()
+        elif self.requesttime < 1.05:
+            self.requesttime += 0.1
             
-        if self.thetype == "delete":
-            self.deleteContinue()
+            if self.thetype == "read":
+                self.startRead()
+            
+            elif self.thetype == "write":
+                self.startWrite()
+            
+            elif self.thetype == "delete":
+                self.startDelete()
+                
+        else:
+        
+            if self.thetype == "write":
+                self.writeContinue()
+            
+            if self.thetype == "read":
+                self.readContinue()
+            
+            if self.thetype == "delete":
+                self.deleteContinue()
         
     
     def writeContinue(self):
-        
-        if self.requesttime < 1:
-            self.requesttime += 0.1
-            
-        else:
-            self.complete += self.speed
-            self.pool.memo.filled += self.speed
-            if self.complete > self.size:
-                self.End()
+          self.complete += self.speed
+          self.pool.memo.filled += self.speed
+          if self.complete > self.size:
+              self.End()
                 
     def readContinue(self):
         
-        if self.requesttime < 1:
-            self.requesttime += 0.1
+        memo = self.pool.memo
             
+        if self.complete < self.size and memo.readused + memo.filled + memo.flushed < memo.space:
+            self.complete += self.loadspeed
+            self.inmemory += self.loadspeed
+            self.pool.memo.readused += self.loadspeed
+            
+        if self.inmemory > self.speed:
+            self.inmemory -= self.speed
+            memo.readused -= self.speed
         else:
-            if self.complete < self.size:
-                self.complete += self.loadspeed
-                self.inmemory += self.loadspeed
-                self.pool.memo.readused += self.loadspeed
-            
-            if self.inmemory > self.speed:
-                self.inmemory -= self.speed
-                self.pool.memo.readused -= self.speed
-            else:
-                self.pool.memo.readused -= self.inmemory
-                self.inmemory = 0
+            memo.readused -= self.inmemory
+            self.inmemory = 0
                 
-            if self.complete > self.size and self.inmemory == 0:
-                self.End()
+        if self.complete > self.size and self.inmemory == 0:
+            self.End()
                 
     def deleteContinue(self):
-        
-        if self.requesttime < 1:
-            self.requesttime += 0.1
+           
+        self.requesttime += 0.1
             
-        else:
-            self.requesttime += 0.1
+        greenlight = self.door.checkDelete(self.pool)
             
-            greenlight = self.door.checkDelete(self.pool)
-            
-            if greenlight == True or self.requesttime > 3:
-                self.pool.files.remove(self.filename)
-                self.End()
+        if greenlight == True or self.requesttime > 3:
+            self.pool.files.remove(self.filename)
+            self.End()
                 
     def End(self):
         

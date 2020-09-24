@@ -50,6 +50,7 @@ class Model:
         t = 1000
         
         for i in range(t):
+            print(i)
             self.ltime.append(i)
             self.currentlist.append(len(self.storage.currenttraffic))
             for pool in self.storage.pools:
@@ -63,7 +64,7 @@ class Model:
             
             print('actual traffic',self.storage.currenttraffic)'''
             
-            if random.random() < 0.1:
+            if random.random() < 0.3:
                 
                 thedoor = random.choice(self.storage.doors)
                 thetype = self.action()
@@ -107,6 +108,7 @@ class Model:
             #print('traffic', len(self.storage.currenttraffic))
                 
         while(len(self.storage.currenttraffic)>0):
+            print(t)
             self.ltime.append(t)
             self.currentlist.append(len(self.storage.currenttraffic))
             for pool in self.storage.pools:
@@ -142,6 +144,7 @@ class Model:
             t += 1
         print("currentcounter", currentcounter)
         self.graphs()
+        self.flushgraph()
         
         for door in self.storage.doors:
             print(door.everyspeed)
@@ -181,3 +184,11 @@ class Model:
         plt.figure()
         plt.plot(self.ltime,self.currentlist)
         plt.show()
+        
+    def flushgraph(self):
+        
+        for pool in self.storage.pools:
+            
+            plt.figure()
+            plt.plot(self.ltime,pool.memo.flushhistory)
+            plt.show()
