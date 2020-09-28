@@ -3,6 +3,8 @@
 Created on Fri Jul  3 09:58:56 2020
 
 @author: Nathalie
+
+Start the model.
 """
 
 import helpers.model as model

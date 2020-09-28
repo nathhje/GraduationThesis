@@ -3,6 +3,13 @@
 Created on Mon Jul  6 11:17:45 2020
 
 @author: Gebruiker
+
+This file contains the core of the model. The storage is created and filled
+with files. Then a time loop is started where in each time step, a check is
+done and if passed, a new job is created. After this, all open jobs make
+progress and they are closed if finished. Each time step ends with making a 
+check if the data in the memory has to be flushed to disc.
+Also contains the graphs.
 """
 
 import random
@@ -58,54 +65,30 @@ class Model:
                     pool.flushing.append(1)
                 else:
                     pool.flushing.append(0)
-            #print(i,len(self.storage.currenttraffic))
-            '''for door in self.storage.doors:
-                print(door.storage.currenttraffic)
-            
-            print('actual traffic',self.storage.currenttraffic)'''
             
             if random.random() < 0.3:
                 
                 thedoor = random.choice(self.storage.doors)
                 thetype = self.action()
-                #print('thetype', thetype)
-                #if thetype == 'delete':
-                    #print('again')
-                    #for ljob in self.storage.currenttraffic:
-                        #print(ljob.speed)
                 
                 thejob = job.Job(thedoor,thetype)
                 self.storage.currenttraffic.append(thejob)
                 currentcounter += 1
                 thejob.time.append(i)
                 thejob.speedhistory.append(thejob.speed)
-                '''if thetype == 'delete':
-                    print('end')
-                    for ljob in self.storage.currenttraffic:
-                        print(ljob.speed)'''
-            #print(self.storage.pools[0].filled)
-            #print(self.storage.filled)
             
             for ajob in self.storage.currenttraffic:
-                '''print(ajob.thetype)
-                print('complete',ajob.complete)
-                print('size', ajob.size)'''
-                #print('before',ajob.thetype, ajob.speed)
                 ajob.Continue()
-                #print('after',ajob.thetype, ajob.speed)
                 ajob.time.append(i)
                 ajob.speedhistory.append(ajob.speed)
                 if ajob.ended == True:
                     self.speedhistory.append(ajob.speedhistory)
                     self.times.append(ajob.time)
                     self.poolhistory.append(ajob.pool)
-                    #print(ajob.thetype,ajob.speedhistory)
                 
             for pool in self.storage.pools:
                 
                 pool.memo.flushCheck(self.storage.currenttraffic)
-            
-            #print('traffic', len(self.storage.currenttraffic))
                 
         while(len(self.storage.currenttraffic)>0):
             print(t)
@@ -116,18 +99,8 @@ class Model:
                     pool.flushing.append(1)
                 else:
                     pool.flushing.append(0)
-            #print(t,len(self.storage.currenttraffic))
-            '''for door in self.storage.doors:
-                print(door.storage.currenttraffic)
-            
-            print('actual traffic',self.storage.currenttraffic)'''
-            #print('traffic', len(self.storage.currenttraffic))
+                    
             for ajob in self.storage.currenttraffic:
-                #print('speeds', ajob.speed)
-                #print('pool', ajob.pool)
-                '''print(ajob.thetype)
-                print('complete',ajob.complete)
-                print('size', ajob.size)'''
                 ajob.Continue()
                 ajob.time.append(t)
                 ajob.speedhistory.append(ajob.speed)
@@ -135,8 +108,7 @@ class Model:
                     self.speedhistory.append(ajob.speedhistory)
                     self.times.append(ajob.time)
                     self.poolhistory.append(ajob.pool)
-                    #print(ajob.thetype,ajob.speedhistory)
-                
+                    
             for pool in self.storage.pools:
                 
                 pool.memo.flushCheck(self.storage.currenttraffic)
@@ -170,11 +142,7 @@ class Model:
             for i in range(len(self.times)):
                 if self.poolhistory[i] == pool:
                     counter +=1
-                    #print(self.speedhistory[i])
                     plt.plot(self.times[i],self.speedhistory[i])
-                    #plt.xlim(600,1000)
-                #plt.show()
-                #plt.figure()
             plt.show()
             print(counter)
             plt.figure()

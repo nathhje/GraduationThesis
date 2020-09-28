@@ -3,6 +3,9 @@
 Created on Fri Jul  3 10:10:16 2020
 
 @author: Gebruiker
+
+A class that has the storage for the model. It contains doors and pools, and
+files located on the pools.
 """
 
 import classes.pool as pool

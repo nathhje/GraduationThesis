@@ -3,6 +3,11 @@
 Created on Wed Aug 19 12:12:03 2020
 
 @author: Gebruiker
+
+This file contains the job class. It initiates a read, write or delete file
+and asks its associated door for location information. The Continue() function
+progresses the job one timestep. When the job is done, it is deleted from the 
+list of active jobs.
 """
 
 import random
@@ -47,13 +52,10 @@ class Job:
         self.filename = file.File(self.size)
         self.pool,self.speed = self.door.getPool(self.size,self.filename)
         
-        
-        
     def startDelete(self):
         self.filename, self.pool = self.door.deletePool()
         
     def Continue(self):
-        #print('here we go again')
         
         if self.requesttime < 1:
             self.requesttime += 0.1

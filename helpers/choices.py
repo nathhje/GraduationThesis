@@ -3,11 +3,14 @@
 Created on Wed Aug  5 11:33:19 2020
 
 @author: Gebruiker
+
+There are different ways to choose what pool a file is written to.
+randomChoice() chooses a random pools and only checks if there is 
+enough space on it. mostSpace() chooses the pool with the most space 
+free space.
 """
 
 import random
-
-import classes.file as file
 
 def randomChoice(storage,size,defile):
     
@@ -26,7 +29,6 @@ def randomChoice(storage,size,defile):
         pool.files.append(defile)
         pool.filled += size
         storage.filled += size
-        #print('pool',pool)
         return pool
     else:
         print("error, file could not be saved")

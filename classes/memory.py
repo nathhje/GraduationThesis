@@ -4,9 +4,12 @@ Created on Tue Aug 25 12:14:15 2020
 
 @author: Gebruiker
 
-If the previous flush is still busy when the next flush is started,
-the first flush is overwritten. Not a worry for right now, but definitely a
-malfunction.
+Each Pool contains a temporary memory. Files that are being written are saved
+in this memory, until the buffer is filled, at which point it is flushed to disc.
+Files that are being read also pass through the memory, but are send on as fast
+as possible rather than when the buffer is filled. This class keeps track of
+how much memory is used and checks whether flushing is happening and progresses
+the flushing.
 """
 
 class Memory():
@@ -30,27 +33,24 @@ class Memory():
         for job in jobs:
             if job.thetype == 'read' and job.pool == self.pool:
                 sharedspeed.append(job)
-        #print(self.filled)
+        
         if self.filled > self.buffer:
             self.flushing = True
             self.flushed += self.filled
-            #print(self.filled)
             self.filled = 0.
             for job in sharedspeed:
                 job.loadspeed = job.loadspeed / 2
-        #print(self.flushed)
+        
         if self.flushing == True:
-            #print('true')
-            #print(self.flushed)
             if len(sharedspeed) == 0:
                 self.flushed -= self.flushspeed
             else:
                 self.flushed -= (self.flushspeed/2)
-            #print(self.flushed)
+            
             if self.flushed <= 0:
                 self.flushed = 0.
                 self.flushing = False
-                #print('logisch')
+                
                 for job in sharedspeed:
                     job.loadspeed = job.loadspeed * 2
                 

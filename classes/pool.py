@@ -3,6 +3,10 @@
 Created on Tue Aug 25 09:50:48 2020
 
 @author: Gebruiker
+
+The Pool class contains a list of files it contains and also has a memory that
+files are temporarily saved in on there way to going to the client or going to
+disc.
 """
 
 import classes.memory as memory

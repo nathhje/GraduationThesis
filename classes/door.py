@@ -3,6 +3,10 @@
 Created on Tue Aug 25 13:44:57 2020
 
 @author: Gebruiker
+
+The door class handles the communication in the model. For each new job it looks
+up where the file can be stored/retrieved from and it changes the loading speed
+of all jobs if new jobs come up or old jobs close.
 """
 
 import random
@@ -25,18 +29,14 @@ class Door():
         for job in self.storage.currenttraffic:
             if job.pool == thePool and job.thetype != 'delete':
                 sharedspeed.append(job)
-        #print('getpool')
+        
         newspeed = thePool.bandwith / (len(sharedspeed)+1)
         self.everyspeed.append(newspeed)
-        #print('writespeed',len(self.storage.currenttraffic),newspeed)
-        #print('new',newspeed)
+        
         for job in sharedspeed:
-            #print(job.speed)
             job.speed = newspeed
-            #print('newspeed',job.speed)
     
         self.poolcounter.append(thePool)
-        #print('write',self.poolcounter)
         return thePool, newspeed
     
     def locatePool(self):
@@ -49,35 +49,22 @@ class Door():
         for job in self.storage.currenttraffic:
             if job.pool == thePool and job.thetype != 'delete':
                 sharedspeed.append(job)
-                #print('speed',job.speed)
                 if job.thetype == 'read':
                     loadspeed.append(job)
-                    #print('loadspeed',job.loadspeed)
         
-        '''print('bandwith',thePool.bandwith)
-        print('amount',len(sharedspeed))
-        print('other amount', len(loadspeed))'''
         newspeed = thePool.bandwith / (len(sharedspeed)+1)
         self.everyspeed.append(newspeed)
-        #print('readspeed',len(self.storage.currenttraffic),newspeed)
-        #print('getpool')
-        #print('new',newspeed)
         newload = thePool.memo.flushspeed / (len(loadspeed)+1)
         if thePool.memo.flushing == True:
              newload = newload / 2
         
         for job in sharedspeed:
-            #print(job.speed)
             job.speed = newspeed
-            #print('newpspeed',job.speed)
             
         for job in loadspeed:
             job.loadspeed = newload
-            #print('newload',job.loadspeed)
-        #print('another one')
         
         self.poolcounter.append(thePool)
-        #print('read',self.poolcounter)
         return theFile, thePool, newspeed, newload
     
     def deletePool(self):
@@ -87,7 +74,6 @@ class Door():
         
         self.storage.files.remove(file)
         self.poolcounter.append(thePool)
-        #print('delete',self.poolcounter)
         return file, thePool
     
     def checkDelete(self, pool):
@@ -107,26 +93,16 @@ class Door():
     def closeJob(self,job):
         
         self.poolcounter.remove(job.pool)
-        #print('closed',self.poolcounter)
-        #print('huh what')
-        #print(self.storage.currenttraffic)
         self.storage.currenttraffic.remove(job)
-        #print(self.storage.currenttraffic)
         sharedspeed = []
         
         for ajob in self.storage.currenttraffic:
             if ajob.pool == job.pool:
                 sharedspeed.append(ajob)
-        #print('closed')
+        
         if len(sharedspeed) > 0 and job.thetype != 'delete':
             newspeed = job.pool.bandwith / len(sharedspeed)
             self.everyspeed.append(newspeed)
-            #print('closedspeed',len(self.storage.currenttraffic),newspeed)
-            #print('new',newspeed)
-            #print(sharedspeed)
+            
             for job in sharedspeed:
-                #print(job.speed)
                 job.speed = newspeed
-                #print('newspeed',job.speed)
-            
-            
