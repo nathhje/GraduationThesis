@@ -4,9 +4,9 @@ Created on Wed Aug  5 11:33:19 2020
 
 @author: Gebruiker
 
-There are different ways to choose what pool a file is written to.
-randomChoice() chooses a random pools and only checks if there is 
-enough space on it. mostSpace() chooses the pool with the most space 
+There are different ways to choose what disc a file is written to.
+randomChoice() chooses a random discs and only checks if there is 
+enough space on it. mostSpace() chooses the disc with the most space 
 free space.
 """
 
@@ -18,40 +18,40 @@ def randomChoice(storage,size,defile):
     counter = 0
             
     while free < size and counter < 50:
-        pool = random.choice(storage.pools)
-        free = pool.space -pool.filled
+        disc = random.choice(storage.discs)
+        free = disc.space -disc.filled
         counter += 1
                 
     if free > size:
             
-        defile.pool = pool
+        defile.disc = disc
         storage.files.append(defile)
-        pool.files.append(defile)
-        pool.filled += size
+        disc.files.append(defile)
+        disc.filled += size
         storage.filled += size
-        return pool
+        return disc
     else:
         print("error, file could not be saved")
 
 def mostSpace(storage,size,defile):
     
-    thePool = storage.pools[0]
+    thedisc = storage.discs[0]
     
-    for i in range(1,len(storage.pools)):
+    for i in range(1,len(storage.discs)):
         
-        if storage.pools[i].filled < thePool.filled:
-            thePool = storage.pools[i]
+        if storage.discs[i].filled < thedisc.filled:
+            thedisc = storage.discs[i]
     
-    free = thePool.space -thePool.filled
+    free = thedisc.space -thedisc.filled
     
     if free > size:
-        defile.pool = thePool
+        defile.disc = thedisc
         storage.files.append(defile)
-        thePool.files.append(defile)
-        thePool.filled += size
+        thedisc.files.append(defile)
+        thedisc.filled += size
         storage.filled += size
         
-        return thePool
+        return thedisc
     else:
         print("error, file could not be saved")
         

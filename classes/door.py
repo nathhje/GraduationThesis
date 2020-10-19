@@ -18,44 +18,44 @@ class Door():
     def __init__(self,storage):
         
         self.storage = storage
-        self.poolcounter = []
+        self.disccounter = []
         self.everyspeed = []
         
-    def getPool(self,size,file):
-        thePool = choices.randomChoice(self.storage,size,file)
+    def getdisc(self,size,file):
+        thedisc = choices.randomChoice(self.storage,size,file)
         
         sharedspeed = []
         
         for job in self.storage.currenttraffic:
-            if job.pool == thePool and job.thetype != 'delete':
+            if job.disc == thedisc and job.thetype != 'delete':
                 sharedspeed.append(job)
         
-        newspeed = thePool.bandwith / (len(sharedspeed)+1)
+        newspeed = thedisc.bandwith / (len(sharedspeed)+1)
         self.everyspeed.append(newspeed)
         
         for job in sharedspeed:
             job.speed = newspeed
     
-        self.poolcounter.append(thePool)
-        return thePool, newspeed
+        self.disccounter.append(thedisc)
+        return thedisc, newspeed
     
-    def locatePool(self):
-        thePool = random.choice(self.storage.pools)
-        theFile = random.choice(thePool.files)
+    def locatedisc(self):
+        thedisc = random.choice(self.storage.discs)
+        theFile = random.choice(thedisc.files)
                 
         sharedspeed = []
         loadspeed = []
         
         for job in self.storage.currenttraffic:
-            if job.pool == thePool and job.thetype != 'delete':
+            if job.disc == thedisc and job.thetype != 'delete':
                 sharedspeed.append(job)
                 if job.thetype == 'read':
                     loadspeed.append(job)
         
-        newspeed = thePool.bandwith / (len(sharedspeed)+1)
+        newspeed = thedisc.bandwith / (len(sharedspeed)+1)
         self.everyspeed.append(newspeed)
-        newload = thePool.memo.flushspeed / (len(loadspeed)+1)
-        if thePool.memo.flushing == True:
+        newload = thedisc.memo.flushspeed / (len(loadspeed)+1)
+        if thedisc.memo.flushing == True:
              newload = newload / 2
         
         for job in sharedspeed:
@@ -64,24 +64,24 @@ class Door():
         for job in loadspeed:
             job.loadspeed = newload
         
-        self.poolcounter.append(thePool)
-        return theFile, thePool, newspeed, newload
+        self.disccounter.append(thedisc)
+        return theFile, thedisc, newspeed, newload
     
-    def deletePool(self):
+    def deletedisc(self):
         
-        thePool = random.choice(self.storage.pools)
-        file = random.choice(thePool.files)
+        thedisc = random.choice(self.storage.discs)
+        file = random.choice(thedisc.files)
         
         self.storage.files.remove(file)
-        self.poolcounter.append(thePool)
-        return file, thePool
+        self.disccounter.append(thedisc)
+        return file, thedisc
     
-    def checkDelete(self, pool):
+    def checkDelete(self, disc):
         
         traffic = []
         
         for job in self.storage.currenttraffic:
-            if job.pool == pool:
+            if job.disc == disc:
                 traffic.append(job)
                 
         if len(traffic) > 2:
@@ -92,16 +92,16 @@ class Door():
     
     def closeJob(self,job):
         
-        self.poolcounter.remove(job.pool)
+        self.disccounter.remove(job.disc)
         self.storage.currenttraffic.remove(job)
         sharedspeed = []
         
         for ajob in self.storage.currenttraffic:
-            if ajob.pool == job.pool:
+            if ajob.disc == job.disc:
                 sharedspeed.append(ajob)
         
         if len(sharedspeed) > 0 and job.thetype != 'delete':
-            newspeed = job.pool.bandwith / len(sharedspeed)
+            newspeed = job.disc.bandwith / len(sharedspeed)
             self.everyspeed.append(newspeed)
             
             for job in sharedspeed:

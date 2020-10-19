@@ -19,26 +19,27 @@ import classes.storage as storage
 import classes.file as file
 import helpers.choices as choices
 import classes.job as job
+import helpers.newjob as newjob
 
 class Model:
     
     def __init__(self):
         
-        self.npools = 4
+        self.ndiscs = 4
         self.ndoors = 4
         self.queue = []
         
-        self.storage = storage.Storage(self.npools,self.ndoors)
+        self.storage = storage.Storage(self.ndiscs,self.ndoors)
         self.jobs = []
         self.speedhistory = []
         self.times = []
-        self.poolhistory = []
+        self.dischistory = []
         self.ltime = []
         self.currentlist = []
         
-        self.setup()
+        self.randomSetup()
     
-    def setup(self):
+    def randomSetup(self):
         
         for i in range(random.randint(10,100)):
             size = random.random()*100.
@@ -52,7 +53,7 @@ class Model:
     
     def run(self):
         
-        currentcounter =0
+        #currentcounter =0
         
         t = 1000
         
@@ -60,22 +61,13 @@ class Model:
             print(i)
             self.ltime.append(i)
             self.currentlist.append(len(self.storage.currenttraffic))
-            for pool in self.storage.pools:
-                if pool.memo.flushing == True:
-                    pool.flushing.append(1)
+            for disc in self.storage.discs:
+                if disc.memo.flushing == True:
+                    disc.flushing.append(1)
                 else:
-                    pool.flushing.append(0)
+                    disc.flushing.append(0)
             
-            if random.random() < 0.3:
-                
-                thedoor = random.choice(self.storage.doors)
-                thetype = self.action()
-                
-                thejob = job.Job(thedoor,thetype)
-                self.storage.currenttraffic.append(thejob)
-                currentcounter += 1
-                thejob.time.append(i)
-                thejob.speedhistory.append(thejob.speed)
+            newjob.randomJob(self,i)
             
             for ajob in self.storage.currenttraffic:
                 ajob.Continue()
@@ -84,21 +76,21 @@ class Model:
                 if ajob.ended == True:
                     self.speedhistory.append(ajob.speedhistory)
                     self.times.append(ajob.time)
-                    self.poolhistory.append(ajob.pool)
+                    self.dischistory.append(ajob.disc)
                 
-            for pool in self.storage.pools:
+            for disc in self.storage.discs:
                 
-                pool.memo.flushCheck(self.storage.currenttraffic)
+                disc.memo.flushCheck(self.storage.currenttraffic)
                 
         while(len(self.storage.currenttraffic)>0):
             print(t)
             self.ltime.append(t)
             self.currentlist.append(len(self.storage.currenttraffic))
-            for pool in self.storage.pools:
-                if pool.memo.flushing == True:
-                    pool.flushing.append(1)
+            for disc in self.storage.discs:
+                if disc.memo.flushing == True:
+                    disc.flushing.append(1)
                 else:
-                    pool.flushing.append(0)
+                    disc.flushing.append(0)
                     
             for ajob in self.storage.currenttraffic:
                 ajob.Continue()
@@ -107,14 +99,14 @@ class Model:
                 if ajob.ended == True:
                     self.speedhistory.append(ajob.speedhistory)
                     self.times.append(ajob.time)
-                    self.poolhistory.append(ajob.pool)
+                    self.dischistory.append(ajob.disc)
                     
-            for pool in self.storage.pools:
+            for disc in self.storage.discs:
                 
-                pool.memo.flushCheck(self.storage.currenttraffic)
+                disc.memo.flushCheck(self.storage.currenttraffic)
                 
             t += 1
-        print("currentcounter", currentcounter)
+        #print("currentcounter", currentcounter)
         self.graphs()
         self.flushgraph()
         
@@ -133,20 +125,20 @@ class Model:
             return("delete")
             
     def graphs(self):
-        print('graph start',len(self.poolhistory))
+        print('graph start',len(self.dischistory))
         counter = 0
         
-        for pool in self.storage.pools:
+        for disc in self.storage.discs:
         
             plt.figure()
             for i in range(len(self.times)):
-                if self.poolhistory[i] == pool:
+                if self.dischistory[i] == disc:
                     counter +=1
                     plt.plot(self.times[i],self.speedhistory[i])
             plt.show()
             print(counter)
             plt.figure()
-            plt.plot(self.ltime,pool.flushing)
+            plt.plot(self.ltime,disc.flushing)
             plt.show()
             
         plt.figure()
@@ -155,8 +147,12 @@ class Model:
         
     def flushgraph(self):
         
-        for pool in self.storage.pools:
+        for disc in self.storage.discs:
             
             plt.figure()
-            plt.plot(self.ltime,pool.memo.flushhistory)
+            plt.plot(self.ltime,disc.memo.flushhistory)
             plt.show()
+            
+    def futureSetup(self):
+        
+        print("not yet, impatient one")

@@ -26,7 +26,7 @@ class Job:
         self.loadspeed = 0
         self.inmemory = 0
         self.complete = 0
-        self.pool = 0
+        self.disc = 0
         self.requesttime = 0
         self.speedhistory = []
         self.time = []
@@ -43,17 +43,17 @@ class Job:
             
     def startRead(self):
         
-        self.filename, self.pool, self.speed, self.loadspeed = self.door.locatePool()
+        self.filename, self.disc, self.speed, self.loadspeed = self.door.locatedisc()
         self.size = self.filename.size
         
     def startWrite(self):
         
         self.size = random.random()*100.
         self.filename = file.File(self.size)
-        self.pool,self.speed = self.door.getPool(self.size,self.filename)
+        self.disc,self.speed = self.door.getdisc(self.size,self.filename)
         
     def startDelete(self):
-        self.filename, self.pool = self.door.deletePool()
+        self.filename, self.disc = self.door.deletedisc()
         
     def Continue(self):
         
@@ -86,18 +86,18 @@ class Job:
     
     def writeContinue(self):
           self.complete += self.speed
-          self.pool.memo.filled += self.speed
+          self.disc.memo.filled += self.speed
           if self.complete > self.size:
               self.End()
                 
     def readContinue(self):
         
-        memo = self.pool.memo
+        memo = self.disc.memo
             
         if self.complete < self.size and memo.readused + memo.filled + memo.flushed < memo.space:
             self.complete += self.loadspeed
             self.inmemory += self.loadspeed
-            self.pool.memo.readused += self.loadspeed
+            self.disc.memo.readused += self.loadspeed
             
         if self.inmemory > self.speed:
             self.inmemory -= self.speed
@@ -113,10 +113,10 @@ class Job:
            
         self.requesttime += 0.1
             
-        greenlight = self.door.checkDelete(self.pool)
+        greenlight = self.door.checkDelete(self.disc)
             
         if greenlight == True or self.requesttime > 3:
-            self.pool.files.remove(self.filename)
+            self.disc.files.remove(self.filename)
             self.End()
                 
     def End(self):

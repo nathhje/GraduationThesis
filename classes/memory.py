@@ -4,7 +4,7 @@ Created on Tue Aug 25 12:14:15 2020
 
 @author: Gebruiker
 
-Each Pool contains a temporary memory. Files that are being written are saved
+Each disc contains a temporary memory. Files that are being written are saved
 in this memory, until the buffer is filled, at which point it is flushed to disc.
 Files that are being read also pass through the memory, but are send on as fast
 as possible rather than when the buffer is filled. This class keeps track of
@@ -14,8 +14,8 @@ the flushing.
 
 class Memory():
     
-    def __init__(self, pool):
-        self.pool = pool
+    def __init__(self, disc):
+        self.disc = disc
         self.space = 1000.
         self.buffer = 500.
         self.filled = 0.
@@ -31,7 +31,7 @@ class Memory():
         sharedspeed = []
         
         for job in jobs:
-            if job.thetype == 'read' and job.pool == self.pool:
+            if job.thetype == 'read' and job.disc == self.disc:
                 sharedspeed.append(job)
         
         if self.filled > self.buffer:
