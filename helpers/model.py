@@ -20,26 +20,27 @@ import classes.file as file
 import helpers.choices as choices
 import classes.job as job
 import helpers.newjob as newjob
+import helpers.retrieve as retrieve
 
 class Model:
     
     def __init__(self):
         
-        self.ndiscs = 4
-        self.ndoors = 4
-        self.queue = []
         
-        self.storage = storage.Storage(self.ndiscs,self.ndoors)
-        self.jobs = []
         self.speedhistory = []
         self.times = []
         self.dischistory = []
         self.ltime = []
         self.currentlist = []
         
-        self.randomSetup()
+        self.futureSetup()
     
     def randomSetup(self):
+        
+        self.ndiscs = 4
+        self.ndoors = 4
+        
+        self.storage = storage.Storage(self.ndiscs,self.ndoors)
         
         for i in range(random.randint(10,100)):
             size = random.random()*100.
@@ -55,7 +56,7 @@ class Model:
         
         #currentcounter =0
         
-        t = 1000
+        t = 100000
         
         for i in range(t):
             print(i)
@@ -67,7 +68,7 @@ class Model:
                 else:
                     disc.flushing.append(0)
             
-            newjob.randomJob(self,i)
+            newjob.futureJob(self,i)
             
             for ajob in self.storage.currenttraffic:
                 ajob.Continue()
@@ -155,4 +156,15 @@ class Model:
             
     def futureSetup(self):
         
-        print("not yet, impatient one")
+        futurelist = retrieve.getJobs()
+        
+        disclist = retrieve.getDiscs(futurelist)
+        self.ndiscs = len(disclist)
+        self.ndoors = 4
+        
+        self.storage = storage.Storage(self.ndiscs,self.ndoors)
+        self.storage.futurelist = futurelist
+        
+        for i in range(len(self.storage.discs)):
+            
+            self.storage.discs[i].name = disclist[i]

@@ -14,6 +14,7 @@ import classes.memory as memory
 class Disc:
     
     def __init__(self):
+        self.name = 'disc'
         self.bandwith = 10.
         self.files = []
         self.space = 10000.

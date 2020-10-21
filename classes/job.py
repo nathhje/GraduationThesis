@@ -32,6 +32,10 @@ class Job:
         self.time = []
         self.ended = False
         
+        self.randomStart()
+        
+    def randomStart(self):
+        
         if self.thetype == "read":
             self.startRead()
             
@@ -40,6 +44,12 @@ class Job:
             
         if self.thetype == "delete":
             self.startDelete()
+    
+    def futureStart(self):
+        '''very messed up, change loads of stuff here.'''
+        self.size = self.thetype['size']
+        
+        self.filename = file.File(self.size)
             
     def startRead(self):
         
