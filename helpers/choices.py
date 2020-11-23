@@ -17,7 +17,7 @@ def randomChoice(storage,size,defile):
     free = 0
     counter = 0
             
-    while free < size and counter < 50:
+    while free < size and counter < 500:
         disc = random.choice(storage.discs)
         free = disc.space -disc.filled
         counter += 1
@@ -31,7 +31,7 @@ def randomChoice(storage,size,defile):
         storage.filled += size
         return disc
     else:
-        print("error, file could not be saved")
+        mostSpace(storage,size,defile)
 
 def mostSpace(storage,size,defile):
     

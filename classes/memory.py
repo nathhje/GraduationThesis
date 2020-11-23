@@ -16,12 +16,12 @@ class Memory():
     
     def __init__(self, disc):
         self.disc = disc
-        self.space = 1000.
-        self.buffer = 500.
+        self.space = 10000000000.
+        self.buffer = 5000000.
         self.filled = 0.
         self.flushing = False
         self.flushed = 0.
-        self.flushspeed = 5.
+        self.flushspeed = 10000.
         self.readused = 0.
         self.flushhistory = []
         

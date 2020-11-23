@@ -15,10 +15,11 @@ class Disc:
     
     def __init__(self):
         self.name = 'disc'
-        self.bandwith = 10.
+        self.bandwith = 10000.
         self.files = []
-        self.space = 10000.
+        self.space = 100000000.
         self.filled = 0
         self.memo = memory.Memory(self)
+        self.activejobs = []
         
         self.flushing = []

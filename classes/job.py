@@ -18,6 +18,7 @@ class Job:
     
     def __init__(self,door,thetype):
         
+        self.id = -5
         self.thetype = thetype
         self.filename = 0
         self.size = 0
@@ -32,7 +33,7 @@ class Job:
         self.time = []
         self.ended = False
         
-        self.randomStart()
+        self.futureStart()
         
     def randomStart(self):
         
@@ -46,24 +47,40 @@ class Job:
             self.startDelete()
     
     def futureStart(self):
-        '''very messed up, change loads of stuff here.'''
+        #print(self.thetype)
         self.size = self.thetype['size']
         
-        self.filename = file.File(self.size)
+        self.filename = file.File(self.thetype)
+        self.disc = self.thetype['domain']
+        
+        if self.thetype['isWrite']=='read':
+            self.speed, self.loadspeed = self.door.readSpeed(self.disc)
+        elif self.thetype['isWrite']=='write':
+            self.speed = self.door.writeSpeed(self.disc)
+            
+        self.thetype = self.thetype['isWrite']
+        
+        self.disc.activejobs.append(self)
             
     def startRead(self):
         
         self.filename, self.disc, self.speed, self.loadspeed = self.door.locatedisc()
         self.size = self.filename.size
         
+        #self.disc.activejobs.append(self)
+        
     def startWrite(self):
         
-        self.size = random.random()*100.
+        self.size = random.random()*10000.
         self.filename = file.File(self.size)
         self.disc,self.speed = self.door.getdisc(self.size,self.filename)
         
+        #self.disc.activejobs.append(self)
+        
     def startDelete(self):
         self.filename, self.disc = self.door.deletedisc()
+        
+        #self.disc.activejobs.append(self)
         
     def Continue(self):
         

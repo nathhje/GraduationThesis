@@ -9,6 +9,7 @@ up where the file can be stored/retrieved from and it changes the loading speed
 of all jobs if new jobs come up or old jobs close.
 """
 
+import copy
 import random
 
 import helpers.choices as choices
@@ -19,41 +20,76 @@ class Door():
         
         self.storage = storage
         self.disccounter = []
-        self.everyspeed = []
+        self.everyspeed = [] 
         
     def getdisc(self,size,file):
         thedisc = choices.randomChoice(self.storage,size,file)
         
-        sharedspeed = []
-        
-        for job in self.storage.currenttraffic:
-            if job.disc == thedisc and job.thetype != 'delete':
-                sharedspeed.append(job)
-        
-        newspeed = thedisc.bandwith / (len(sharedspeed)+1)
-        self.everyspeed.append(newspeed)
-        
-        for job in sharedspeed:
-            job.speed = newspeed
-    
-        self.disccounter.append(thedisc)
+        newspeed = self.writeSpeed(thedisc)
         return thedisc, newspeed
     
     def locatedisc(self):
         thedisc = random.choice(self.storage.discs)
         theFile = random.choice(thedisc.files)
-                
-        sharedspeed = []
-        loadspeed = []
         
-        for job in self.storage.currenttraffic:
-            if job.disc == thedisc and job.thetype != 'delete':
-                sharedspeed.append(job)
-                if job.thetype == 'read':
-                    loadspeed.append(job)
+        newspeed, newload = self.readSpeed(thedisc)
+        
+        return theFile, thedisc, newspeed, newload
+    
+    def deletedisc(self):
+        
+        thedisc = random.choice(self.storage.discs)
+        file = random.choice(thedisc.files)
+        
+        self.storage.files.remove(file)
+        #self.disccounter.append(thedisc)
+        return file, thedisc
+    
+    def checkDelete(self, disc):
+                
+        if len(disc.activejobs) > 2:
+            return False
+        else:
+            return True
+        
+    def writeSpeed(self,thedisc):
+        #print(thedisc.activejobs)
+        
+        sharedspeed = []
+        
+        if len(thedisc.activejobs) > 0:
+            sharedspeed = copy.deepcopy(thedisc.activejobs)
+        
+        for job in sharedspeed:
+            if job.thetype == 'delete':
+                sharedspeed.remove(job)
         
         newspeed = thedisc.bandwith / (len(sharedspeed)+1)
-        self.everyspeed.append(newspeed)
+        #self.everyspeed.append(newspeed)
+        
+        for job in sharedspeed:
+            job.speed = newspeed
+    
+        #self.disccounter.append(thedisc)
+        
+        return newspeed
+    
+    def readSpeed(self,thedisc):
+        
+        sharedspeed = []
+        
+        if len(thedisc.activejobs) > 0:
+            sharedspeed = copy.deepcopy(thedisc.activejobs)
+        loadspeed = []
+        
+        for job in sharedspeed:
+            if job.thetype == 'read':
+                loadspeed.append(job)
+            if job.thetype == 'delete':
+                sharedspeed.remove(job)
+        
+        newspeed = thedisc.bandwith / (len(sharedspeed)+1)
+        #self.everyspeed.append(newspeed)
         newload = thedisc.memo.flushspeed / (len(loadspeed)+1)
         if thedisc.memo.flushing == True:
              newload = newload / 2
@@ -64,45 +100,50 @@ class Door():
         for job in loadspeed:
             job.loadspeed = newload
         
-        self.disccounter.append(thedisc)
-        return theFile, thedisc, newspeed, newload
-    
-    def deletedisc(self):
+        #self.disccounter.append(thedisc)
         
-        thedisc = random.choice(self.storage.discs)
-        file = random.choice(thedisc.files)
-        
-        self.storage.files.remove(file)
-        self.disccounter.append(thedisc)
-        return file, thedisc
-    
-    def checkDelete(self, disc):
-        
-        traffic = []
-        
-        for job in self.storage.currenttraffic:
-            if job.disc == disc:
-                traffic.append(job)
-                
-        if len(traffic) > 2:
-            return False
-        else:
-            return True
-        
+        return newspeed,newload
     
     def closeJob(self,job):
         
-        self.disccounter.remove(job.disc)
+        #self.disccounter.remove(job.disc)
         self.storage.currenttraffic.remove(job)
+        '''
+        print('huh', job.disc)
+        
+        for disc in self.storage.discs:
+            if job in disc.activejobs:
+                print('frustrating',disc)
+        for disc in self.storage.discs:
+            if disc == job.disc:
+                print('ugh',disc)
+                print('blrgh', job.disc.activejobs)
+        print('maar het gaat ook wel goed', job)
+        '''
+        job.disc.activejobs.remove(job)
+        #print('weird',job.disc.activejobs)
         sharedspeed = []
         
-        for ajob in self.storage.currenttraffic:
-            if ajob.disc == job.disc:
-                sharedspeed.append(ajob)
+        if len(job.disc.activejobs) > 0:
+            sharedspeed = copy.deepcopy(job.disc.activejobs)
+        loadspeed = []
+        
+        for job in sharedspeed:
+            if job.thetype == 'delete':
+                sharedspeed.remove(job)
+            if job.thetype == 'read':
+                loadspeed.append(job)
         
         if len(sharedspeed) > 0 and job.thetype != 'delete':
             newspeed = job.disc.bandwith / len(sharedspeed)
-            self.everyspeed.append(newspeed)
+            #self.everyspeed.append(newspeed)
             
             for job in sharedspeed:
                 job.speed = newspeed
+                
+            if len(loadspeed) > 0:
+                newload = job.disc.memo.flushspeed / (len(loadspeed))
+                if job.disc.memo.flushing == True:
+                    newload = newload / 2
+                for job in loadspeed:
+                    job.loadspeed = newload
