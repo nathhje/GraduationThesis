@@ -58,7 +58,10 @@ class Door():
         sharedspeed = []
         
         if len(thedisc.activejobs) > 0:
-            sharedspeed = copy.deepcopy(thedisc.activejobs)
+            
+            for job in thedisc.activejobs:
+                if job.thetype == 'read' or job.thetype == 'write':
+                    sharedspeed.append(job)
         
         for job in sharedspeed:
             if job.thetype == 'delete':
@@ -77,16 +80,15 @@ class Door():
     def readSpeed(self,thedisc):
         
         sharedspeed = []
-        
-        if len(thedisc.activejobs) > 0:
-            sharedspeed = copy.deepcopy(thedisc.activejobs)
         loadspeed = []
         
-        for job in sharedspeed:
-            if job.thetype == 'read':
-                loadspeed.append(job)
-            if job.thetype == 'delete':
-                sharedspeed.remove(job)
+        if len(thedisc.activejobs) > 0:
+            
+            for job in thedisc.activejobs:
+                if job.thetype == 'read' or job.thetype == 'write':
+                    sharedspeed.append(job)
+                    if job.thetype == 'read':
+                        loadspeed.append(job)
         
         newspeed = thedisc.bandwith / (len(sharedspeed)+1)
         #self.everyspeed.append(newspeed)
@@ -123,27 +125,26 @@ class Door():
         job.disc.activejobs.remove(job)
         #print('weird',job.disc.activejobs)
         sharedspeed = []
-        
-        if len(job.disc.activejobs) > 0:
-            sharedspeed = copy.deepcopy(job.disc.activejobs)
         loadspeed = []
         
-        for job in sharedspeed:
-            if job.thetype == 'delete':
-                sharedspeed.remove(job)
-            if job.thetype == 'read':
-                loadspeed.append(job)
+        if len(job.disc.activejobs) > 0:
+            
+            for ajob in job.disc.activejobs:
+                if ajob.thetype == 'read' or ajob.thetype == 'write':
+                    sharedspeed.append(job)
+                    if ajob.thetype == 'read':
+                        loadspeed.append(ajob)
         
         if len(sharedspeed) > 0 and job.thetype != 'delete':
             newspeed = job.disc.bandwith / len(sharedspeed)
             #self.everyspeed.append(newspeed)
             
-            for job in sharedspeed:
-                job.speed = newspeed
+            for ajob in sharedspeed:
+                ajob.speed = newspeed
                 
             if len(loadspeed) > 0:
                 newload = job.disc.memo.flushspeed / (len(loadspeed))
                 if job.disc.memo.flushing == True:
                     newload = newload / 2
-                for job in loadspeed:
-                    job.loadspeed = newload
+                for ajob in loadspeed:
+                    ajob.loadspeed = newload

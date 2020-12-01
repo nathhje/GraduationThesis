@@ -13,7 +13,6 @@ Also contains the graphs.
 """
 
 import random
-import matplotlib.pyplot as plt
 
 import classes.storage as storage
 import classes.file as file
@@ -61,10 +60,13 @@ class Model:
         
         #currentcounter =0
         
-        t = 20000
+        t = 400
         
         for i in range(t):
             #print(i)
+            if i%100 == 0:
+                self.goSave()
+                
             if i%100 == 0:
                 print(i)
                 print(len(self.storage.currenttraffic))
@@ -101,9 +103,12 @@ class Model:
                 
         while(len(self.storage.currenttraffic)>0):
             print(t)
+            if t%10000 == 0:
+                self.goSave()
+                
             if t%100 == 0:
                 print('traffic',len(self.storage.currenttraffic))
-            if t>30000:
+            if t>3000:
                 print('yeah, it went there')
                 break
             self.ltime.append(t)
@@ -136,11 +141,6 @@ class Model:
             t += 1
         print('whats left',len(self.storage.currenttraffic))
         #print("currentcounter", currentcounter)
-        '''self.durationcompare()
-        self.graphs()
-        self.flushgraph()
-        self.lengthhist()
-        self.durationgraph()'''
         
         savedata.writeData(self.ltime, 'ltime')
         savedata.writeData(self.currentlist, 'currentlist')
@@ -151,7 +151,10 @@ class Model:
         for usedjob in self.usedjobs:
             del usedjob['domain']
         data = {}
-        data['jobs'] = self.usedjobs
+        data['jobs'] = []
+        for nextjob in self.storage.currenttraffic:
+            # ik moet de json job opslaan en ook de model job for completion en dergelijke.
+            print('work has to be done')
         savedata.writeJson(data, 'usedjobs')
         savedata.writeCsv(self.times, 'times')
         
@@ -165,53 +168,33 @@ class Model:
         #for door in self.storage.doors:
             #print(door.everyspeed)
             
-    def durationgraph(self):
-        
-        plt.figure()
-        plt.hist(self.durations)
-        plt.show()
-        
-        plt.figure()
-        plt.hist(self.durations, bins = range(0,10000,10))
-        plt.show()
-        
-        plt.figure()
-        plt.hist(self.durations, bins = range(0,100000,100))
-        plt.show()
-        
-        
             
-    def durationcompare(self):
-        print('wnat hier blijkbaar niet',len(self.usedjobs))
-        for ajob in self.usedjobs:
-            print('next duration')
-            print(ajob['duration'])
-            print(ajob['actualduration'])
-            print(ajob['size'])
-            
-        differences = []
-        fractions = []
+    def goSave(self):
         
-        for ajob in self.usedjobs:
-            differences.append(ajob['duration']-ajob['actualduration'])
-            
-            if ajob['duration'] != 0:
-                fractions.append((ajob['duration']-ajob['actualduration'])/ajob['duration'])
-            
-        plt.figure()
-        plt.hist(differences)
-        plt.xscale('log')
-        plt.show()
+        savedata.writeData(self.ltime, 'ltime')
+        savedata.writeData(self.currentlist, 'currentlist')
+        savedata.writeData(self.durations, 'durations')
+        savedata.writeData(self.useddurations, 'useddurations')
+        #print(self.usedjobs)
         
-        plt.figure()
-        plt.hist(differences, bins = range(0,1000,1))
-        plt.xscale('log')
-        plt.show()
+        for usedjob in self.usedjobs:
+            del usedjob['domain']
+        data = {}
+        data['jobs'] = self.usedjobs
+        savedata.writeJson(data, 'usedjobs')
         
-        plt.figure()
-        plt.hist(fractions, bins = np.arange(-5,3,0.1))
-        plt.show()
-        #print(fractions)
+        actives = {}
+        actives['jobs'] = self.storage.currenttraffic
+        print(self.storage.currenttraffic)
+        savedata.writeJson(actives, 'currenttraffic')
+        savedata.writeCsv(self.times, 'times')
+        
+        flushhistory = []
+        
+        for i in range(len(self.storage.discs)):
+            flushhistory.append(self.storage.discs[i].memo.flushhistory)
+            
+        savedata.writeCsv(flushhistory, 'flushhistory')
     
     def action(self):
         
@@ -223,88 +206,6 @@ class Model:
             return("write")
         else:
             return("delete")
-            
-    def lengthhist(self):
-        
-        difference = []
-        xlist = []
-        
-        step = 1
-        
-        for i in np.arange(0,30,step):
-            
-            k=0
-            l=0
-            
-            for atime in self.times:
-                if i<atime[-1]-atime[0]<(i+step):
-                    k += 1
-                    
-            for adur in self.useddurations:
-                if i<adur<(i+step):
-                    l+= 1
-            
-            difference.append(k-l)
-            xlist.append(i)
-            
-        plt.figure()
-        plt.plot(xlist,difference)
-        plt.show()
-                    
-        lengthlist = []
-        
-        for atime in self.times:
-            if atime[-1]-atime[0]<100000:
-                lengthlist.append(atime[-1]-atime[0])
-            
-        plt.figure()
-        plt.hist(lengthlist, bins = range(0,20000,10))
-        plt.ylim(0,100)
-        plt.plot()
-        
-        plt.figure()
-        plt.hist(lengthlist, bins = range(0,20000,10))
-        plt.ylim(0,1000)
-        plt.plot()
-        
-        print('length lengthlist',len(lengthlist))
-            
-    def graphs(self):
-        print('graph start',len(self.dischistory))
-        counter = 0
-        print(len(self.storage.discs))
-        '''
-        plt.figure()
-        for disc in self.storage.discs:
-        
-            
-            for i in range(len(self.times)):
-                if self.dischistory[i] == disc:
-                    counter +=1
-                    print(counter)
-                    plt.plot(self.times[i],self.speedhistory[i])
-        plt.show()
-        '''
-        '''print(counter)
-        plt.figure()
-        plt.plot(self.ltime,disc.flushing)
-        plt.show()'''
-            
-        plt.figure()
-        plt.plot(self.ltime,self.currentlist)
-        plt.show()
-        
-    def flushgraph(self):
-        counter = 0
-        plt.figure()
-        for disc in self.storage.discs:
-            counter += 1
-            
-            plt.plot(self.ltime,disc.memo.flushhistory)
-        
-        plt.title('The current amount of data being flushed on each disc')
-        plt.show()
-        print('should be number of discs either way', counter)
             
     def futureSetup(self):
         

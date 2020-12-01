@@ -7,7 +7,7 @@ Created on Wed Oct 21 10:51:06 2020
 
 import json
 
-date = '03.28.json'
+date = '06.12.json'
 
 def getJobs():
     
