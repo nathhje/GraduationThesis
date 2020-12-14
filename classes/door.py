@@ -74,7 +74,7 @@ class Door():
             job.speed = newspeed
     
         #self.disccounter.append(thedisc)
-        
+        #print('write',newspeed)
         return newspeed
     
     def readSpeed(self,thedisc):
@@ -103,10 +103,11 @@ class Door():
             job.loadspeed = newload
         
         #self.disccounter.append(thedisc)
-        
+        #print('read',newspeed,newload)
         return newspeed,newload
     
     def closeJob(self,job):
+        print('before', len(self.storage.currenttraffic))
         
         #self.disccounter.remove(job.disc)
         self.storage.currenttraffic.remove(job)
@@ -135,6 +136,9 @@ class Door():
                     if ajob.thetype == 'read':
                         loadspeed.append(ajob)
         
+        newspeed =0
+        newload = 0
+        
         if len(sharedspeed) > 0 and job.thetype != 'delete':
             newspeed = job.disc.bandwith / len(sharedspeed)
             #self.everyspeed.append(newspeed)
@@ -142,9 +146,12 @@ class Door():
             for ajob in sharedspeed:
                 ajob.speed = newspeed
                 
-            if len(loadspeed) > 0:
+            if len(loadspeed) > 0 and job.thetype == 'read':
                 newload = job.disc.memo.flushspeed / (len(loadspeed))
                 if job.disc.memo.flushing == True:
                     newload = newload / 2
                 for ajob in loadspeed:
                     ajob.loadspeed = newload
+                    
+        print('end',newspeed,newload)
+        print('after', len(self.storage.currenttraffic))

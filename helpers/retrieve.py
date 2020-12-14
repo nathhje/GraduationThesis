@@ -7,7 +7,7 @@ Created on Wed Oct 21 10:51:06 2020
 
 import json
 
-date = '06.12.json'
+date = '07.19.json'
 
 def getJobs():
     
@@ -27,7 +27,7 @@ def getJobs():
         hour = int(stamp[11:13])
         minute = int(stamp[14:16])
         second= float(stamp[17:23])
-        job['size'] = job['size'] / 1000
+        job['size'] = job['size'] / 1000.
         
         time = hour * 3600 + minute * 60 + second
         job['time'] = time

@@ -9,7 +9,7 @@ import numpy as np
 import csv
 import json
 
-titlebase = 'firstrun2-23/02-23t20000u1in10b10000d1000buff5000000'
+titlebase = 'savedata/07-19t30000u1in10b1000000d1000buff5000000'
 
 def readData(file):
     

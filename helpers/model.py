@@ -36,6 +36,8 @@ class Model:
         self.durations = []
         self.useddurations = []
         self.usedjobs = []
+        self.startjobs = []
+        self.endjobs = []
         
         self.futureSetup()
     
@@ -60,14 +62,14 @@ class Model:
         
         #currentcounter =0
         
-        t = 400
+        t = 80
         
         for i in range(t):
             #print(i)
-            if i%100 == 0:
+            if i%5000 == 0:
                 self.goSave()
                 
-            if i%100 == 0:
+            if i%1 == 0:
                 print(i)
                 print(len(self.storage.currenttraffic))
             '''print('new',self.storage.currenttraffic)
@@ -82,12 +84,14 @@ class Model:
                     disc.flushing.append(0)
             
             newjob.futureJob(self,i)
-            
+            endcounter = 0
             for ajob in self.storage.currenttraffic:
                 ajob.Continue()
+                print('progress',ajob.size,ajob.complete,ajob.speed)
                 ajob.time.append(i)
                 ajob.speedhistory.append(ajob.speed)
                 if ajob.ended == True:
+                    endcounter+= 1
                     #print('at least something ends')
                     self.speedhistory.append(ajob.speedhistory)
                     self.times.append(ajob.time)
@@ -95,7 +99,7 @@ class Model:
                     
                     self.storage.futurelist[ajob.id]['actualduration'] = ajob.time[-1]-ajob.time[0]
                     self.usedjobs.append(self.storage.futurelist[ajob.id])
-                    
+            self.endjobs.append(endcounter)
                 
             for disc in self.storage.discs:
                 
@@ -103,12 +107,12 @@ class Model:
                 
         while(len(self.storage.currenttraffic)>0):
             print(t)
-            if t%10000 == 0:
+            if t%5000 == 0:
                 self.goSave()
                 
             if t%100 == 0:
                 print('traffic',len(self.storage.currenttraffic))
-            if t>3000:
+            if t>35000:
                 print('yeah, it went there')
                 break
             self.ltime.append(t)
@@ -118,12 +122,13 @@ class Model:
                     disc.flushing.append(1)
                 else:
                     disc.flushing.append(0)
-                    
+            endcounter = 0
             for ajob in self.storage.currenttraffic:
                 ajob.Continue()
                 ajob.time.append(t)
                 ajob.speedhistory.append(ajob.speed)
                 if ajob.ended == True:
+                    endcounter += 1
                     #print('at least something ends')
                     self.speedhistory.append(ajob.speedhistory)
                     self.times.append(ajob.time)
@@ -133,7 +138,7 @@ class Model:
                     
                     self.storage.futurelist[ajob.id]['actualduration'] = ajob.time[-1]-ajob.time[0]
                     self.usedjobs.append(self.storage.futurelist[ajob.id])
-                    
+            self.endjobs.append(endcounter)
             for disc in self.storage.discs:
                 
                 disc.memo.flushCheck(self.storage.currenttraffic)
@@ -142,51 +147,38 @@ class Model:
         print('whats left',len(self.storage.currenttraffic))
         #print("currentcounter", currentcounter)
         
-        savedata.writeData(self.ltime, 'ltime')
-        savedata.writeData(self.currentlist, 'currentlist')
-        savedata.writeData(self.durations, 'durations')
-        savedata.writeData(self.useddurations, 'useddurations')
-        #print(self.usedjobs)
-        
-        for usedjob in self.usedjobs:
-            del usedjob['domain']
-        data = {}
-        data['jobs'] = []
-        for nextjob in self.storage.currenttraffic:
-            # ik moet de json job opslaan en ook de model job for completion en dergelijke.
-            print('work has to be done')
-        savedata.writeJson(data, 'usedjobs')
-        savedata.writeCsv(self.times, 'times')
-        
-        flushhistory = []
-        
-        for i in range(len(self.storage.discs)):
-            flushhistory.append(self.storage.discs[i].memo.flushhistory)
-            
-        savedata.writeCsv(flushhistory, 'flushhistory')
-        
-        #for door in self.storage.doors:
-            #print(door.everyspeed)
+        self.goSave()
             
             
     def goSave(self):
         
         savedata.writeData(self.ltime, 'ltime')
         savedata.writeData(self.currentlist, 'currentlist')
+        savedata.writeData(self.startjobs, 'startjobs')
+        savedata.writeData(self.endjobs, 'endjobs')
         savedata.writeData(self.durations, 'durations')
         savedata.writeData(self.useddurations, 'useddurations')
         #print(self.usedjobs)
         
         for usedjob in self.usedjobs:
-            del usedjob['domain']
+            if 'domain' in usedjob:
+                del usedjob['domain']
         data = {}
         data['jobs'] = self.usedjobs
         savedata.writeJson(data, 'usedjobs')
         
         actives = {}
-        actives['jobs'] = self.storage.currenttraffic
-        print(self.storage.currenttraffic)
+        actives['jobs'] = []
+        
+        for activejob in self.storage.currenttraffic:
+            savejob = activejob.sourcejob
+            savejob['complete'] = activejob.complete
+            savejob['inmemory'] = activejob.inmemory
+            savejob.pop('domain',None)
+            actives['jobs'].append(savejob)
+        print(actives)
         savedata.writeJson(actives, 'currenttraffic')
+        
         savedata.writeCsv(self.times, 'times')
         
         flushhistory = []

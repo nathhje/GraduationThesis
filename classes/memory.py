@@ -21,7 +21,7 @@ class Memory():
         self.filled = 0.
         self.flushing = False
         self.flushed = 0.
-        self.flushspeed = 10000.
+        self.flushspeed = 1000000.
         self.readused = 0.
         self.flushhistory = []
         

@@ -34,10 +34,12 @@ def randomJob(model, time):
 
 def futureJob(model, time):
     
+    counter = 0
+    
     for futurejob in model.storage.futurelist:
         
         if time < futurejob['time'] < (time+1):
-            
+            counter += 1
             thedoor = random.choice(model.storage.doors)
             #thetype = futurejob['isWrite']
             thejob = job.Job(thedoor,futurejob)
@@ -46,3 +48,5 @@ def futureJob(model, time):
             thejob.time.append(time)
             thejob.speedhistory.append(thejob.speed)
             model.useddurations.append(futurejob['duration'])
+            
+    model.startjobs.append(counter)

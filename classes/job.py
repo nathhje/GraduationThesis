@@ -32,6 +32,7 @@ class Job:
         self.speedhistory = []
         self.time = []
         self.ended = False
+        self.sourcejob = thetype
         
         self.futureStart()
         
