@@ -85,38 +85,26 @@ class Job:
         
     def Continue(self):
         
-        if self.requesttime < 1:
-            self.requesttime += 0.1
+        if self.thetype == "write":
+            self.writeContinue()
             
-        elif self.requesttime < 1.05:
-            self.requesttime += 0.1
+        if self.thetype == "read":
+            self.readContinue()
             
-            if self.thetype == "read":
-                self.startRead()
-            
-            elif self.thetype == "write":
-                self.startWrite()
-            
-            elif self.thetype == "delete":
-                self.startDelete()
-                
-        else:
-        
-            if self.thetype == "write":
-                self.writeContinue()
-            
-            if self.thetype == "read":
-                self.readContinue()
-            
-            if self.thetype == "delete":
-                self.deleteContinue()
+        if self.thetype == "delete":
+            self.deleteContinue()
         
     
     def writeContinue(self):
-          self.complete += self.speed
-          self.disc.memo.filled += self.speed
-          if self.complete > self.size:
-              self.End()
+        
+        memo = self.disc.memo
+        
+        if memo.readused + memo.filled + memo.flushed < memo.space:
+            self.complete += self.speed
+            self.disc.memo.filled += self.speed
+        if self.complete > self.size:
+            self.disc.memo.filled -= self.complete - self.size
+            self.End()
                 
     def readContinue(self):
         

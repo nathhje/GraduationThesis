@@ -107,8 +107,6 @@ class Door():
         return newspeed,newload
     
     def closeJob(self,job):
-        print('before', len(self.storage.currenttraffic))
-        
         #self.disccounter.remove(job.disc)
         self.storage.currenttraffic.remove(job)
         '''
@@ -152,6 +150,3 @@ class Door():
                     newload = newload / 2
                 for ajob in loadspeed:
                     ajob.loadspeed = newload
-                    
-        print('end',newspeed,newload)
-        print('after', len(self.storage.currenttraffic))

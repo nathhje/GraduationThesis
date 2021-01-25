@@ -62,14 +62,14 @@ class Model:
         
         #currentcounter =0
         
-        t = 80
+        t = 86400
         
         for i in range(t):
             #print(i)
             if i%5000 == 0:
                 self.goSave()
                 
-            if i%1 == 0:
+            if i%100 == 0:
                 print(i)
                 print(len(self.storage.currenttraffic))
             '''print('new',self.storage.currenttraffic)
@@ -87,7 +87,6 @@ class Model:
             endcounter = 0
             for ajob in self.storage.currenttraffic:
                 ajob.Continue()
-                print('progress',ajob.size,ajob.complete,ajob.speed)
                 ajob.time.append(i)
                 ajob.speedhistory.append(ajob.speed)
                 if ajob.ended == True:
@@ -112,7 +111,7 @@ class Model:
                 
             if t%100 == 0:
                 print('traffic',len(self.storage.currenttraffic))
-            if t>35000:
+            if t>100000:
                 print('yeah, it went there')
                 break
             self.ltime.append(t)
@@ -181,12 +180,18 @@ class Model:
         
         savedata.writeCsv(self.times, 'times')
         
+        filledhistory = []
         flushhistory = []
+        memoryreadhistory = []
         
         for i in range(len(self.storage.discs)):
+            filledhistory.append(self.storage.discs[i].memo.filledhistory)
             flushhistory.append(self.storage.discs[i].memo.flushhistory)
+            memoryreadhistory.append(self.storage.discs[i].memo.memoryreadhistory)
             
+        savedata.writeCsv(filledhistory, 'filledhistory')
         savedata.writeCsv(flushhistory, 'flushhistory')
+        savedata.writeCsv(memoryreadhistory, 'memoryreadhistory')
     
     def action(self):
         

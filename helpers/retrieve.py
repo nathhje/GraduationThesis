@@ -19,7 +19,7 @@ def getJobs():
     highest = 0
     counter = 0
     
-    for i in range(0,len(transfers),10):
+    for i in range(0,len(transfers),1):
         
         job = transfers[i]
         job['id'] = counter

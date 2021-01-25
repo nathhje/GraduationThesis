@@ -15,7 +15,7 @@ class Disc:
     
     def __init__(self):
         self.name = 'disc'
-        self.bandwith = 1000000.
+        self.bandwith = 100000.
         self.files = []
         self.space = 100000000.
         self.filled = 0

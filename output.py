@@ -3,13 +3,21 @@
 Created on Mon Nov 23 21:54:31 2020
 
 @author: Gebruiker
+
+new plot:
+determine average bandwith = filesize/duration
+add average bandwith of current jobs at each timestep
+
+"cluster_name":"dcache-grid-storage"
+"cluster_name":"dcache-stoomboot"
+
 """
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
 import json
 
-titlebase = 'savedata/07-19t30000u1in10b1000000d1000buff5000000'
+titlebase = 'christmasdata/07-19t86400u1in10b1000d1000buff5000000s10000000000'
 
 def readData(file):
     
@@ -205,6 +213,12 @@ def flushgraph(ltime,flushhistory):
     plt.show()
     print('should be number of discs either way', counter)
     
+def expectedAverage(usedjobs):
+    
+    averages = [0 for i in range(86400)]
+    
+    
+    
 
 thecurrentlist = readData(titlebase+'currentlist.txt')
 print('these')
@@ -219,6 +233,7 @@ print('few')
 theuseddurations = readData(titlebase+'useddurations.txt')
 print('lists')
 theusedjobs = readJson(titlebase+'usedjobs.txt')
+print(theusedjobs[0])
 print('to load')
 #print(thedurations)
 print(len(thedurations))
