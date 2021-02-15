@@ -17,7 +17,7 @@ import numpy as np
 import csv
 import json
 
-titlebase = 'christmasdata/07-19t86400u1in10b1000d1000buff5000000s10000000000'
+titlebase = 'christmasdata/07-19t86400u1in10b100000d1000buff5000000s1000000000'
 
 def readData(file):
     
@@ -84,18 +84,22 @@ def durationcompare(usedjobs):
         inmodel.append(ajob['actualduration'])
         differences.append(ajob['duration']-ajob['actualduration'])
         
-        if ajob['duration'] != 0:
-            fractions.append((ajob['duration']-ajob['actualduration'])/ajob['duration'])
+        if ajob['duration'] != 0 or ajob['actualduration'] != 0:
+            fractions.append((ajob['duration']-ajob['actualduration'])/(ajob['duration']+ajob['actualduration']))
+        else:
+            fractions.append(-2)
     
     plt.figure()
-    plt.hist(indatabase, bins = range(0,2500,10))
+    plt.hist(indatabase, bins = range(0,2500,1))
     plt.title('Histogram of the duration of each job in the database')
+    plt.xlim(0,50)
     plt.xlabel('duration (s)')
     plt.show()
     
     plt.figure()
-    plt.hist(inmodel, bins = range(0,2500,10))
+    plt.hist(inmodel, bins = range(0,2500,1))
     plt.title('Histogram of the duration of each job in the model')
+    plt.xlim(0,50)
     plt.xlabel('duration (s)')
     plt.show()
     
@@ -115,8 +119,16 @@ def durationcompare(usedjobs):
     
     plt.figure()
     plt.hist(fractions, bins = np.arange(-5,3,0.1))
-    plt.title('Histogram of difference between duration in the model \n and in the database for each job \n as a fraction of the duration in the database')
+    plt.title('Histogram of difference between duration in the model \n and in the database for each job \n as a fraction of the sum of the duration in the database and in the model')
     plt.xlabel('fraction')
+    plt.show()
+    
+    plt.figure()
+    plt.plot(indatabase,fractions,'b.', markersize = '1')
+    plt.title('Scatter plot of the duration in the database \n against the difference between the durations as \n a fraction of the sum of the durations')
+    plt.xlabel('database duration')
+    plt.ylabel('fraction')
+    plt.xlim(0,2500)
     plt.show()
     #print(fractions)
             

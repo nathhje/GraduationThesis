@@ -20,7 +20,8 @@ class Door():
         
         self.storage = storage
         self.disccounter = []
-        self.everyspeed = [] 
+        self.everyspeed = []
+        self.writefraction = 0.5
         
     def getdisc(self,size,file):
         thedisc = choices.randomChoice(self.storage,size,file)
@@ -60,14 +61,11 @@ class Door():
         if len(thedisc.activejobs) > 0:
             
             for job in thedisc.activejobs:
-                if job.thetype == 'read' or job.thetype == 'write':
+                if job.thetype == 'write':
                     sharedspeed.append(job)
         
-        for job in sharedspeed:
-            if job.thetype == 'delete':
-                sharedspeed.remove(job)
         
-        newspeed = thedisc.bandwith / (len(sharedspeed)+1)
+        newspeed = thedisc.bandwith * self.writefraction / (len(sharedspeed)+1)
         #self.everyspeed.append(newspeed)
         
         for job in sharedspeed:
@@ -85,12 +83,11 @@ class Door():
         if len(thedisc.activejobs) > 0:
             
             for job in thedisc.activejobs:
-                if job.thetype == 'read' or job.thetype == 'write':
+                if job.thetype == 'read':
                     sharedspeed.append(job)
-                    if job.thetype == 'read':
-                        loadspeed.append(job)
+                    loadspeed.append(job)
         
-        newspeed = thedisc.bandwith / (len(sharedspeed)+1)
+        newspeed = thedisc.bandwith * (1-self.writefraction) / (len(sharedspeed)+1)
         #self.everyspeed.append(newspeed)
         newload = thedisc.memo.flushspeed / (len(loadspeed)+1)
         if thedisc.memo.flushing == True:
