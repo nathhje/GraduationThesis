@@ -9,7 +9,7 @@ import json
 import math
 import matplotlib.pyplot as plt
 
-date = '06.12.json'
+date = '07.19.json'
 
 def getJobs():
     
@@ -27,14 +27,17 @@ def getJobs():
     
     for i in range(0,len(transfers),1):
         
-        if i %1000 == 0:
-            print(i,'eerste')
+        '''if i %1000 == 0:
+            print(i,'eerste')'''
         job = transfers[i]
         job['id'] = counter
         stamp = job['timestamp']
         hour = int(stamp[11:13])
         minute = int(stamp[14:16])
         second= float(stamp[17:23])
+        
+        if i < 30:
+            print(stamp)
         
         time = (hour * 3600 + minute * 60 + second)*factor
         job['time'] = time
@@ -43,10 +46,14 @@ def getJobs():
         joblist.append(job)
         
     timelist = [i/factor for i in range(factor*secondsperday)]
+    completetimelist = [i/factor for i in range(0,factor*secondsperday,1000)]
+    print(len(completetimelist))
+    print(completetimelist[0:30])
+    
     activelist = [0 for i in range(factor*secondsperday)]
     readactive = [0 for i in range(factor*secondsperday)]
     writeactive = [0 for i in range(factor*secondsperday)]
-    completelist = [0 for i in range(factor*secondsperday)]
+    completelist = [0 for i in range(0,factor*secondsperday,1000)]
     counter = 0
     
     readcounter = 0
@@ -66,7 +73,10 @@ def getJobs():
             starttime = 0
         
         endtime = math.floor(job['time'])
-        completelist[endtime] += 1
+        completeendtime = math.floor(job['time']/1000)
+        #print(job['time'])
+        #print(completeendtime)
+        completelist[completeendtime] += 1
         
         if job['isWrite'] == 'write':
             writecounter += 1
@@ -105,7 +115,7 @@ def getJobs():
     plt.show()
     
     plt.figure()
-    plt.plot(timelist,completelist)
+    plt.plot(completetimelist,completelist)
     plt.xlabel('time (s)')
     plt.title('number of jobs completed each timestep')
     plt.show()
