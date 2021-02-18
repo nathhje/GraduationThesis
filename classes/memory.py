@@ -28,7 +28,8 @@ class Memory():
         self.flushhistory = []
         self.filledhistory = []
         self.readhistory = []
-        self.timer = []
+        self.timer = 0
+        self.blocked = False
         
         
     def flushCheck(self, jobs):
@@ -48,6 +49,16 @@ class Memory():
                 job.loadspeed = job.loadspeed / 2
         
         self.timer += 1
+        
+        if self.blocked == False:
+            
+            if self.readused + self.flushed + self.filled > self.space:
+                self.blocked = True
+                
+        if self.blocked == True:
+            
+            if self.readused + self.flushed+ self.filled < self.buffer:
+                self.blocked = False
         
         if self.flushing == True:
             self.timer = 0

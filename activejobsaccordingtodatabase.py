@@ -46,14 +46,14 @@ def getJobs():
         joblist.append(job)
         
     timelist = [i/factor for i in range(factor*secondsperday)]
-    completetimelist = [i/factor for i in range(0,factor*secondsperday,1000)]
+    completetimelist = [i/factor for i in range(0,factor*secondsperday,10000)]
     print(len(completetimelist))
     print(completetimelist[0:30])
     
     activelist = [0 for i in range(factor*secondsperday)]
     readactive = [0 for i in range(factor*secondsperday)]
     writeactive = [0 for i in range(factor*secondsperday)]
-    completelist = [0 for i in range(0,factor*secondsperday,1000)]
+    completelist = [0 for i in range(0,factor*secondsperday,10000)]
     counter = 0
     
     readcounter = 0
@@ -73,7 +73,7 @@ def getJobs():
             starttime = 0
         
         endtime = math.floor(job['time'])
-        completeendtime = math.floor(job['time']/1000)
+        completeendtime = math.floor(job['time']/10000)
         #print(job['time'])
         #print(completeendtime)
         completelist[completeendtime] += 1

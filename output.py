@@ -71,7 +71,7 @@ def durationcompare(usedjobs):
     '''for ajob in usedjobs:
         print('next duration')
         print(ajob['duration'])
-        print(ajob['actualduration'])
+        print(ajob['modelduration'])
         print(ajob['size'])'''
         
     differences = []
@@ -81,11 +81,11 @@ def durationcompare(usedjobs):
     
     for ajob in usedjobs:
         indatabase.append(ajob['duration'])
-        inmodel.append(ajob['actualduration'])
-        differences.append(ajob['duration']-ajob['actualduration'])
+        inmodel.append(ajob['modelduration'])
+        differences.append(ajob['duration']-ajob['modelduration'])
         
         if ajob['duration'] != 0 or ajob['actualduration'] != 0:
-            fractions.append((ajob['duration']-ajob['actualduration'])/(ajob['duration']+ajob['actualduration']))
+            fractions.append((ajob['duration']-ajob['modelduration'])/(ajob['duration']+ajob['modelduration']))
         else:
             fractions.append(-2)
     

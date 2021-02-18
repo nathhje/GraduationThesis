@@ -8,7 +8,7 @@ Created on Sat Nov 21 08:43:12 2020
 import json
 import csv
 
-titlestart = 'savedata/07-19t86400u1in1b100000d1000buff500000'
+titlestart = 'savedata/test07-19t86400u1in1b100000d1000buff500000'
 
 def writeCsv(data,titleend):
     

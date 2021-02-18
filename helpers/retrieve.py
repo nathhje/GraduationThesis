@@ -9,13 +9,13 @@ import json
 
 date = '07.19.json'
 
-def getJobs():
+def getJobs(factor, filereduction):
     
     file = open('data/importanttransfers2020.' + date,'r')
     
     transfers = json.load(file)['jobs']
     actualjobs = []
-    durations = []
+    #databasedurations = []
     highest = 0
     counter = 0
     
@@ -29,19 +29,21 @@ def getJobs():
         hour = int(stamp[11:13])
         minute = int(stamp[14:16])
         second= float(stamp[17:23])
-        job['size'] = job['size'] / 1000.
+        job['size'] = job['size'] / filereduction
+        job['databaseduration'] = job['duration']/ 1000. * factor
         
-        time = hour * 3600 + minute * 60 + second
-        job['time'] = time
+        endtime = hour * 3600 + minute * 60 + second
+        job['endtime'] = endtime*factor
+        job['time'] = endtime*factor - job['databaseduration']
         
-        if highest < time:
-            highest = time
+        if highest < endtime:
+            highest = endtime
         actualjobs.append(job)
         
-        durations.append(job['duration'])
+        #databasedurations.append(job['databaseduration'])
         counter += 1
     print('highest',highest)
-    return actualjobs, durations
+    return actualjobs#, databasedurations
 
 def getDiscs(joblist):
     

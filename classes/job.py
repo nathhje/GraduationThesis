@@ -99,7 +99,7 @@ class Job:
         
         memo = self.disc.memo
         
-        if memo.readused + memo.filled + memo.flushed < memo.space:
+        if memo.blocked == False:
             self.complete += self.speed
             self.disc.memo.filled += self.speed
         if self.complete > self.size:
@@ -110,7 +110,7 @@ class Job:
         
         memo = self.disc.memo
             
-        if self.complete < self.size and memo.readused + memo.filled + memo.flushed < memo.space:
+        if self.complete < self.size and memo.blocked == False:
             self.complete += self.loadspeed
             self.inmemory += self.loadspeed
             self.disc.memo.readused += self.loadspeed
